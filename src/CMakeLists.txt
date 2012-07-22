@@ -15,6 +15,7 @@ include_directories(
  
  
 add_library( ${CMAKE_PROJECT_NAME} 
+                Atomic.cpp
                 Blanks.cpp
                 CharSet.cpp
                 Cache.cpp
