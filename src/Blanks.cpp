@@ -14,15 +14,14 @@ namespace fontconfig
 {
 
 
-Blanks::Blanks()
+Blanks::Blanks(void* fc_blanks):
+    m_fc_blanks(fc_blanks)
 {
-    assert(false);
 }
 
-Blanks::~Blanks()
+void Blanks::destroy()
 {
-    FcBlanks* _this = (FcBlanks*)this;
-    FcBlanksDestroy(_this);
+    FcBlanksDestroy( (FcBlanks*)m_fc_blanks );
 }
 
 bool Blanks::add(Char32_t ucs4)

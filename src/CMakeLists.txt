@@ -20,6 +20,8 @@ add_library( ${CMAKE_PROJECT_NAME}
                 Cache.cpp
                 LangSet.cpp
                 Matrix.cpp
+                ObjectSet.cpp
+                Pattern.cpp
                 StrList.cpp
                 StrSet.cpp
                 )

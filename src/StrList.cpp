@@ -12,9 +12,21 @@
 namespace fontconfig
 {
 
-StrList* StrList::create(StrSet* set)
+StrList::StrList( void* ptr )
+:
+    m_ptr(ptr)
 {
-    return (StrList*) FcStrListCreate( (FcStrSet*)set );
+
+}
+
+void* StrList::get_ptr()
+{
+    return m_ptr;
+}
+
+StrList StrList::create(StrSet set)
+{
+    return StrList ( FcStrListCreate( (FcStrSet*)set.get_ptr() ) );
 }
 
 Char8_t* StrList::next()

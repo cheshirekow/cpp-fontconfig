@@ -15,22 +15,30 @@
 namespace fontconfig
 {
 
-struct _StrList
-{
-    StrSet      *set;
-    int         n;
-};
-
 /// used during enumeration to safely and correctly walk the list of strings
 /// even while that list is edited in the middle of enumeration.
+/**
+ *  String iterators are not reference counted object and the StrList class is
+ *  mearly a container for the pointer. It is safe to copy an StrList but
+ *  be sure to only call destroy on one of the copies.
+ *
+ *  Also, since StrList is a wrapper for the pointer, you should probably
+ *  only allocate an StrList on the stack.
+ */
 class StrList
 {
+    private:
+        void* m_ptr;
+        StrList( void* ptr );
+
     public:
+        void* get_ptr();
+
         /// create a string iterator
         /**
          *  Creates an iterator to list the strings in set.
          */
-        static StrList* create (StrSet *set);
+        static StrList create (StrSet set);
 
         /// get next string in iteration
         /**

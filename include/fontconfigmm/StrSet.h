@@ -14,27 +14,32 @@
 namespace fontconfig
 {
 
-struct _StrSet
-{
-    int         ref;    /* reference count */
-    int         num;
-    int         size;
-    Char8_t     **strs;
-};
-
 /// holds a list of strings that can be appended to and enumerated.
 /**
  *  Its unique characteristic is that the enumeration works even while strings
  *  are appended during enumeration.
+ *
+ *  String sets are not reference counted object and the StrSet class is
+ *  mearly a container for the pointer. It is safe to copy an StrSet but
+ *  be sure to only call destroy on one of the copies.
+ *
+ *  Also, since StrSet is a wrapper for the pointer, you should probably
+ *  only allocate an StrSet on the stack.
  */
 class StrSet
 {
+    private:
+        void* m_ptr;
+
     public:
+        StrSet(void* ptr);
+        void* get_ptr();
+
         /// create a string set
         /**
          *  Create an empty set.
          */
-        static StrSet*  create(void);
+        static StrSet  create(void);
 
         /// check set for membership
         /**
@@ -47,7 +52,7 @@ class StrSet
          *  Returns whether set_a contains precisely the same strings as set_b.
          *  Ordering of strings within the two sets is not considered.
          */
-        bool equal (StrSet *other);
+        bool equal (StrSet other);
 
         /// add to a string set
         /**
@@ -75,6 +80,7 @@ class StrSet
          */
         void destroy ();
 };
+
 
 } // namespace fontconfig 
 

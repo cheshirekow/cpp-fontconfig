@@ -14,36 +14,36 @@
 namespace fontconfig
 {
 
-///< same as _FcBlanks
+
+///< holds a list of Unicode chars which are expected to be blank
 /**
- *  holds a list of Unicode chars which are expected to be blank; unexpectedly
+ *  unexpectedly
  *  blank chars are assumed to be invalid and are elided from the charset
  *  associated with the font.
+ *
+ *  Blanks structures are not reference counted. It is safe to pass around
+ *  copies of this object, however you must remember to call destroy on
+ *  one and only one copy when you're done with it
+ *
+ *  It contains only one data member which is a pointer
+ *  and the copy constructor will simply copy that pointer so there is no
+ *  reason to allocate a Blank on the heap.
  */
-struct _Blanks
-{
-    int         nblank;
-    int         sblank;
-    Char32_t    *blanks;
-};
-
-class Blanks :
-    public _Blanks
+class Blanks
 {
     private:
-        /// Don't use the constructor, use create()
-        /**
-         *  The constructor should never be used as I haven't investigated
-         *  what is actually going on in FcBlanksCreate.
-         */
-        Blanks();
+        void* m_fc_blanks;
+
+        /// Constructs a new Blanks object wrapping the underlying
+        /// c structure
+        Blanks(void* fc_blanks);
 
     public:
         /// Destroys an FcBlanks object, freeing any associated memory.
         /**
          *  @see FcBlanksDestroy
          */
-        ~Blanks();
+        void destroy();
 
         /// Add a character to an FcBlanks
         /**

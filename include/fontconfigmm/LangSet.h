@@ -15,21 +15,6 @@
 namespace fontconfig
 {
 
-namespace lang
-{
-
-const unsigned int NUM_CHAR_SET = 243;
-const unsigned int NUM_SET_MAP  = 8;
-
-}
-
-struct _LangSet
-{
-    StrSet*   extra;
-    Char32_t  map_size;
-    Char32_t  map[lang::NUM_SET_MAP];
-};
-
 /// An LangSet is an abstract type that holds the set of languages supported
 /// by a font.
 /**
@@ -41,14 +26,20 @@ struct _LangSet
  */
 class LangSet
 {
+    private:
+        void* m_ptr;
+
     public:
-        LangSet();
+        LangSet( void* ptr );
+
+        void* get_ptr();
+        const void* get_ptr() const;
 
         /// create a langset object
         /**
          *  FcLangSetCreate creates a new FcLangSet object.
          */
-        static LangSet*  create (void);
+        static LangSet  create (void);
 
         /// destroy a langset object
         /**
@@ -62,7 +53,7 @@ class LangSet
          *  FcLangSetCopy creates a new FcLangSet object and populates it with
          *  the contents of ls.
          */
-        LangSet*  copy ();
+        LangSet  copy ();
 
         /// add a language to a langset
         /**
@@ -100,7 +91,7 @@ class LangSet
          *  FcLangDifferentTerritory. If they share no languages in common,
          *  this function returns FcLangDifferentLang.
          */
-        LangResult_t  compare (const LangSet *lsb);
+        LangResult_t  compare (const LangSet lsb);
 
         /// check langset subset relation
         /**
@@ -109,14 +100,14 @@ class LangSet
          *  exactly the language, or either the language or ls_a has no
          *  territory.
          */
-        bool  contains (const LangSet *lsb);
+        bool  contains (const LangSet lsb);
 
         /// test for matching langsets
         /**
          *  Returns FcTrue if and only if ls_a supports precisely the same
          *  language and territory combinations as ls_b.
          */
-        bool  equal (const LangSet *lsb);
+        bool  equal (const LangSet lsb);
 
         /// return a hash value for a langset
         /**
@@ -131,21 +122,21 @@ class LangSet
         /**
          *
          */
-        StrSet * getLangs ();
+        StrSet getLangs ();
 
         /// Add langsets
         /**
          *  Returns a set including only those languages found in either
          *  ls_a or ls_b.
          */
-        LangSet *  creatUnion (const LangSet *b);
+        LangSet  creatUnion (const LangSet b);
 
         /// Subtract langsets
         /**
          *  Returns a set including only those languages found in ls_a but
          *  not in ls_b.
          */
-        LangSet *  subtract (const LangSet *b);
+        LangSet  subtract (const LangSet b);
 };
 
 } // namespace fontconfig 

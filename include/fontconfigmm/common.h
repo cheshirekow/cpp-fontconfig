@@ -11,6 +11,18 @@
 
 
 
+
+
+#define FCMM_DONT_CONSTRUCT( TYPE ) \
+private:                        \
+    template <typename T>       \
+    TYPE( const T& param )      \
+    {                           \
+        struct TYPE##_is_an_opaque_type_use_create_method{} obj;    \
+        int i = obj;            \
+    }                           \
+
+
 namespace fontconfig
 {
 
@@ -258,15 +270,33 @@ namespace lang
 
 enum Result
 {
-    FcLangEqual                 = 0,
-    FcLangDifferentCountry      = 1,
-    FcLangDifferentTerritory    = 1,
-    FcLangDifferentLang         = 2
+    Equal                 = 0,
+    DifferentCountry      = 1,
+    DifferentTerritory    = 1,
+    DifferentLang         = 2
 };
 
 }
 
 typedef lang::Result LangResult_t;
+
+
+namespace result
+{
+
+enum Result
+{
+    Match,
+    NoMatch,
+    TypeMismatch,
+    NoId,
+    OutOfMemory
+};
+
+}
+
+typedef result::Result Result_t;
+
 
 
 }

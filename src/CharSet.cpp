@@ -12,93 +12,133 @@
 namespace fontconfig
 {
 
-CharSet* CharSet::create(void)
+CharSet::CharSet( void* ptr ):
+    m_ptr(ptr)
 {
-    return (CharSet*) FcCharSetCreate();
+
 }
 
-void CharSet::destroy()
+CharSet::CharSet( const CharSet& other )
 {
-    FcCharSetDestroy( (FcCharSet*)this );
+    m_ptr = FcCharSetCopy( (FcCharSet*)other.m_ptr );
 }
+
+CharSet::~CharSet()
+{
+    FcCharSetDestroy( (FcCharSet*)m_ptr );
+}
+
+void* CharSet::get_ptr()
+{
+    return m_ptr;
+}
+
+const void* CharSet::get_ptr() const
+{
+    return m_ptr;
+}
+
+CharSet& CharSet::operator=( const CharSet& other )
+{
+    FcCharSetDestroy( (FcCharSet*)m_ptr );
+    m_ptr =  FcCharSetCopy( (FcCharSet*)other.m_ptr );
+    return *this;
+}
+
+CharSet CharSet::create(void)
+{
+    return CharSet ( FcCharSetCreate() );
+}
+
+//void CharSet::destroy()
+//{
+//    FcCharSetDestroy( (FcCharSet*)m_ptr );
+//}
 
 bool CharSet::addChar(Char32_t ucs4)
 {
-    return FcCharSetAddChar( (FcCharSet*)this, ucs4 );
+    return FcCharSetAddChar( (FcCharSet*)m_ptr, ucs4 );
 }
 
 bool CharSet::delChar(Char32_t ucs4)
 {
-    return FcCharSetDelChar( (FcCharSet*)this, ucs4 );
+    return FcCharSetDelChar( (FcCharSet*)m_ptr, ucs4 );
 }
 
-CharSet* CharSet::copy()
+//CharSet CharSet::copy()
+//{
+//    return CharSet( FcCharSetCopy( (FcCharSet*)m_ptr ) );
+//}
+
+bool CharSet::equal(const CharSet& other)
 {
-    return (CharSet*) FcCharSetCopy( (FcCharSet*)this );
+    return FcCharSetEqual( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
 }
 
-bool CharSet::equal(const CharSet* other)
+CharSet CharSet::intersect(const CharSet& other)
 {
-    return FcCharSetEqual( (FcCharSet*)this, (FcCharSet*)other );
+    return CharSet(
+            FcCharSetIntersect( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr ) );
 }
 
-CharSet* CharSet::intersect(const CharSet* other)
+CharSet CharSet::createUnion(const CharSet& other)
 {
-    return (CharSet*) FcCharSetIntersect( (FcCharSet*)this, (FcCharSet*)other );
+    return CharSet(
+            FcCharSetUnion((FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr ) );
 }
 
-CharSet* CharSet::createUnion(const CharSet* other)
+CharSet CharSet::subtract(const CharSet& other)
 {
-    return (CharSet*) FcCharSetUnion((FcCharSet*)this, (FcCharSet*)other );
+    return CharSet(
+            FcCharSetSubtract( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr ) );
 }
 
-CharSet* CharSet::subtract(const CharSet* other)
+bool CharSet::merge(const CharSet& other, bool& changed)
 {
-    return (CharSet*) FcCharSetSubtract( (FcCharSet*)this, (FcCharSet*)other );
-}
-
-bool CharSet::merge(const CharSet* other, bool& changed)
-{
-    int changed2;
-    bool result = FcCharSetMerge( (FcCharSet*)this, (FcCharSet*)other, &changed2 );
-    changed = changed2 != 0;
-
+    FcBool changed2;
+    bool result = FcCharSetMerge( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr, &changed2 );
+    changed = changed2;
     return result;
+}
+
+bool CharSet::merge(const CharSet& other)
+{
+    return FcCharSetMerge( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr, 0 );
 }
 
 bool CharSet::hasChar(Char32_t ucs4)
 {
-    return FcCharSetHasChar( (FcCharSet*)this, ucs4 );
+    return FcCharSetHasChar( (FcCharSet*)m_ptr, ucs4 );
 }
 
 Char32_t CharSet::count()
 {
-    return FcCharSetCount( (FcCharSet*)this );
+    return FcCharSetCount( (FcCharSet*)m_ptr );
 }
 
-Char32_t CharSet::intersectCount(const CharSet* other)
+Char32_t CharSet::intersectCount(const CharSet& other)
 {
-    return FcCharSetIntersectCount( (FcCharSet*)this, (FcCharSet*)other );
+    return FcCharSetIntersectCount( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
 }
 
-Char32_t CharSet::subtractCount(const CharSet* other)
+Char32_t CharSet::subtractCount(const CharSet& other)
 {
-    return FcCharSetSubtractCount( (FcCharSet*)this, (FcCharSet*)other );
+    return FcCharSetSubtractCount( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
 }
 
-bool CharSet::isSubset(const CharSet* other)
+bool CharSet::isSubset(const CharSet& other)
 {
-    return FcCharSetIsSubset( (FcCharSet*)this, (FcCharSet*)other );
+    return FcCharSetIsSubset( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
 }
 
 Char32_t CharSet::firstPage(Char32_t map[MAP_SIZE], Char32_t* next)
 {
-    return FcCharSetFirstPage( (FcCharSet*)this, map, next );
+    return FcCharSetFirstPage( (FcCharSet*)m_ptr, map, next );
 }
 
 Char32_t CharSet::nextPage(Char32_t map[MAP_SIZE], Char32_t* next)
 {
-    return FcCharSetNextPage( (FcCharSet*)this, map, next );
+    return FcCharSetNextPage( (FcCharSet*)m_ptr, map, next );
 }
 
 } // namespace fontconfig 
