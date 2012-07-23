@@ -39,7 +39,7 @@ int main( int argc, char** argv )
         // type safe but inextensible version that works only on built in
         // types, will give a compiler error if the parameter is not the
         // right type for the key
-        pat.add<fc::key::FAMILY>( (const fc::Char8_t*)argv[1] );
+        pat.addBuiltIn<fc::key::FAMILY>( (const fc::Char8_t*)argv[1] );
 
         // get a pointer to the default configuration
         fc::Config  config = fc::Config::getCurrent();
@@ -56,12 +56,14 @@ int main( int argc, char** argv )
         fc::Char8_t*    file;
         int             index;
 
+        // we should have a better get/add interface... this isn't very
+        // c++-y
         match.get( fc::FILE, 0, file);
         match.get( fc::INDEX, 0, index);
 
         // at this point, we probably want to use freetype to get a face
-
-        // but for now, we'll just print the font file
+        // that we can use in our application, but since this is just a
+        // demo, we'll print the font file and quit
         std::cout << "Font found for query [" << argv[1] << "] at "
                   << file << std::endl;
 
