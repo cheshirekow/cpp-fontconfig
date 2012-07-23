@@ -16,19 +16,6 @@ namespace fontconfig
 {
 
 
-/// binary compatable with FcCache
-struct _Cache
-{
-    int         magic;          ///<  FC_CACHE_MAGIC_MMAP or FC_CACHE_ALLOC
-    int         version;        ///<  FC_CACHE_CONTENT_VERSION
-    intptr_t    size;           ///<  size of file
-    intptr_t    dir;            ///<  offset to dir name
-    intptr_t    dirs;           ///<  offset to subdirs
-    int         dirs_count;     ///<  number of subdir strings
-    intptr_t    set;            ///<  offset to font set
-    int         checksum;       ///<  checksum of directory state
-};
-
 /// Holds information about the fonts contained in a single directory.
 /**
  *  Normal
@@ -39,10 +26,17 @@ struct _Cache
  *
  *  @see FcCache
  */
-class Cache :
-    public _Cache
+class Cache
 {
+    private:
+        void* m_ptr;
+
     public:
+        Cache( void* ptr );
+        void* get_ptr();
+        const void* get_ptr() const;
+
+
         /// Return directory of cache
         /**
          *  This function returns the directory from which the cache was

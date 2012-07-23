@@ -32,13 +32,13 @@ namespace fontconfig
 class Blanks
 {
     private:
-        void* m_fc_blanks;
-
-        /// Constructs a new Blanks object wrapping the underlying
-        /// c structure
-        Blanks(void* fc_blanks);
+        void* m_ptr;
 
     public:
+        /// Constructs a new Blanks object wrapping the underlying
+        /// c structure
+        Blanks(void* ptr);
+
         /// Destroys an FcBlanks object, freeing any associated memory.
         /**
          *  @see FcBlanksDestroy

@@ -84,6 +84,16 @@ Pattern::~Pattern()
     FcPatternDestroy( (FcPattern*)m_ptr );
 }
 
+void* Pattern::get_ptr()
+{
+    return m_ptr;
+}
+
+const void* Pattern::get_ptr() const
+{
+    return m_ptr;
+}
+
 Pattern& Pattern::operator=( const Pattern& other )
 {
     FcPatternDestroy( (FcPattern*)m_ptr );

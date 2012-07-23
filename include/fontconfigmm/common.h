@@ -298,6 +298,18 @@ enum Result
 typedef result::Result Result_t;
 
 
+namespace setname
+{
+
+enum SetName
+{
+    System      = 0,
+    Application = 1
+};
+
+}
+
+typedef setname::SetName SetName_t;
 
 }
 

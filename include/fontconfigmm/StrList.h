@@ -29,9 +29,10 @@ class StrList
 {
     private:
         void* m_ptr;
-        StrList( void* ptr );
 
     public:
+        StrList( void* ptr );
+
         void* get_ptr();
 
         /// create a string iterator

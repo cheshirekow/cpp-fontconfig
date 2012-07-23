@@ -54,6 +54,9 @@ class Pattern
          */
         ~Pattern();
 
+        void* get_ptr();
+        const void* get_ptr() const;
+
         /// assignment operator reassigns this pattern pointer dropping
         /// the reference to the old one and adding a reference to the new one
         Pattern& operator=( const Pattern& other );

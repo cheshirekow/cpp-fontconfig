@@ -19,6 +19,8 @@ add_library( ${CMAKE_PROJECT_NAME}
                 Blanks.cpp
                 CharSet.cpp
                 Cache.cpp
+                Config.cpp
+                FontSet.cpp
                 LangSet.cpp
                 Matrix.cpp
                 ObjectSet.cpp
