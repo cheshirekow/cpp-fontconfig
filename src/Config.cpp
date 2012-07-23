@@ -206,7 +206,7 @@ FontSet Config::fontSetSort(
             int nsets,
             Pattern p,
             bool trim,
-            CharSet& csp,
+            CharSet* csp,
             Result_t& result)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
@@ -223,18 +223,25 @@ FontSet Config::fontSetSort(
                     nsets,
                     (FcPattern*)p.get_ptr(),
                     trim ? FcTrue : FcFalse,
-                    &csp2,
+                    csp ? &csp2 : (FcCharSet**)0,
                     &result2) );
 
     delete [] ptrs;
 
-    //FIXME: need to copy csp2 to csp and add option to not return csp
+    if(csp)
+    {
+        // increment reference count on csp2
+        csp2 = FcCharSetCopy(csp2);
+
+        // reassign csp
+        *csp = CharSet(csp2);
+    }
 
     result = (Result_t) result2;
     return returnMe;
 }
 
-FontSet Config::fontSort(Pattern p, bool trim, CharSet& csp, Result_t& result)
+FontSet Config::fontSort(Pattern p, bool trim, CharSet* csp, Result_t& result)
 {
     FcCharSet*  csp2;
     FcResult    result2;
@@ -245,8 +252,17 @@ FontSet Config::fontSort(Pattern p, bool trim, CharSet& csp, Result_t& result)
             FcFontSort( (FcConfig*)m_ptr,
                         (FcPattern*)p.get_ptr(),
                         trim ? FcTrue : FcFalse,
-                        &csp2,
+                        csp ? &csp2 : (FcCharSet**)0,
                         &result2 ) );
+
+    if(csp)
+    {
+        // increment reference count on csp2
+        csp2 = FcCharSetCopy(csp2);
+
+        // reassign csp
+        *csp = CharSet(csp2);
+    }
 
     result = (Result_t)result2;
 
@@ -283,6 +299,16 @@ bool Config::parseAndLoad(Config config, const Char8_t* file, bool complain)
     return FcConfigParseAndLoad(
                 (FcConfig*)config.get_ptr(),
                 file, complain ? FcTrue : FcFalse );
+}
+
+bool Config::unlink(const Char8_t* dir)
+{
+    return FcDirCacheUnlink(dir, (FcConfig*)m_ptr );
+}
+
+void Config::createTagFile() const
+{
+    return FcCacheCreateTagFile((const FcConfig*)m_ptr);
 }
 
 

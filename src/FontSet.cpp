@@ -42,5 +42,10 @@ bool FontSet::add(Pattern font)
     return FcFontSetAdd( (FcFontSet*)m_ptr, (FcPattern*)font.get_ptr() );
 }
 
+void FontSet::print()
+{
+    FcFontSetPrint( (FcFontSet*)m_ptr );
+}
+
 
 } // namespace fontconfig 

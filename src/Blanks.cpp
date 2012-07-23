@@ -19,24 +19,36 @@ Blanks::Blanks(void* ptr):
 {
 }
 
+void* Blanks::get_ptr()
+{
+    return m_ptr;
+}
+
+const void* Blanks::get_ptr() const
+{
+    return m_ptr;
+}
+
 void Blanks::destroy()
 {
-    FcBlanksDestroy( (FcBlanks*)m_ptr );
+    FcBlanksDestroy( (FcBlanks*) (m_ptr));
 }
 
 bool Blanks::add(Char32_t ucs4)
 {
-    return FcBlanksAdd( (FcBlanks*)m_ptr, ucs4 );
+    return FcBlanksAdd((FcBlanks*) (m_ptr), ucs4);
 }
 
 bool Blanks::isMember(Char32_t ucs4)
 {
-    return FcBlanksIsMember( (FcBlanks*)m_ptr, ucs4 );
+    return FcBlanksIsMember((FcBlanks*) (m_ptr), ucs4);
 }
+
+
 
 Blanks* Blanks::create()
 {
-    return (Blanks*) FcBlanksCreate();
+    return (Blanks*) (FcBlanksCreate());
 }
 
 } // namespace fontconfig 

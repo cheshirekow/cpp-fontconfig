@@ -10,7 +10,10 @@
 #define FONTCONFIGMM_CACHE_H_
 
 #include <fontconfigmm/common.h>
+#include <fontconfigmm/Config.h>
 #include <unistd.h>
+#include <sys/stat.h>
+
 
 namespace fontconfig
 {
@@ -73,21 +76,53 @@ class Cache
          */
         int numFont ();
 
-        //static bool unlink (const Char8_t *dir, FcConfig *config);
-
-        //static bool valid (const Char8_t *cache_file);
-
         ///  This tries to clean up the cache directory of cache_dir. This
         /// returns FcTrue if the operation is successfully complete.
         /// otherwise FcFalse.
-        //static bool clean (const Char8_t *cache_dir, bool verbose);
+        static bool dirClean (const Char8_t *cache_dir, bool verbose);
 
-        /// Create CACHEDIR.TAG at cache directory.
+        /// checks directory cache
         /**
-         *  This tries to create CACHEDIR.TAG file at the cache directory
-         *  registered to config.
+         *  Returns FcTrue if dir has an associated valid cache file, else
+         *  returns FcFalse
          */
-        //void createTagFile (const FcConfig *config);
+        bool dirValid( const Char8_t* dir );
+
+        /// load a directory cache
+        /**
+         *  Loads the cache related to dir. If no cache file exists,
+         *  returns NULL. The name of the cache file is returned in cache_file,
+         *  unless that is NULL. See also FcDirCacheRead.
+         */
+        static Cache load( const Char8_t* dir,
+                            Config config,
+                            Char8_t** cache_file );
+
+        /// read or construct a directory cache
+        /**
+         *  This returns a cache for dir. If force is FcFalse, then an
+         *  existing, valid cache file will be used. Otherwise, a new cache
+         *  will be created by scanning the directory and that returned.
+         */
+        static Cache read( const Char8_t* dir,
+                            bool force,
+                            Config config );
+
+        /// load a cache file
+        /**
+         *  This function loads a directory cache from cache_file. If
+         *  file_stat is non-NULL, it will be filled with the results of
+         *  stat(2) on the cache file.
+         */
+        static Cache loadFile( const Char8_t* cache_file,
+                                struct stat* file_stat );
+
+        /// unload a cache file
+        /**
+         *  This function dereferences cache. When no other references to it
+         *  remain, all memory associated with the cache will be freed.
+         */
+        void unload();
 };
 
 } // namespace fontconfig 

@@ -383,7 +383,7 @@ class Config
                     int         nsets,
                     Pattern     p,
                     bool        trim,
-                    CharSet&    csp,
+                    CharSet*    csp,
                     Result_t&   result);
 
 
@@ -410,7 +410,7 @@ class Config
         FontSet fontSort (
                     Pattern     p,
                     bool        trim,
-                    CharSet&    csp,
+                    CharSet*    csp,
                     Result_t&   result);
 
 
@@ -454,6 +454,22 @@ class Config
                     Config          config,
                     const Char8_t   *file,
                     bool            complain);
+
+        /// Remove all caches related to \p dir
+        /**
+         *  Scans the cache directories in config, removing any instances of
+         *  the cache file for dir. Returns FcFalse when some internal error
+         *  occurs (out of memory, etc). Errors actually unlinking any files
+         *  are ignored.
+         */
+        bool unlink (const Char8_t *dir);
+
+        /// Create CACHEDIR.TAG at cache directory
+        /**
+         *  This tries to create CACHEDIR.TAG file at the cache directory
+         *  registered to config.
+         */
+        void createTagFile() const;
 };
 
 } // namespace fontconfig 

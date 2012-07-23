@@ -70,6 +70,9 @@ class FontSet
          */
         bool add(Pattern font);
 
+        /// Print a set of patterns to stdout
+        void print();
+
 
 
 };

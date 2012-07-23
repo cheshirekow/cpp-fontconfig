@@ -14,18 +14,19 @@
 namespace fontconfig
 {
 
-/// same as FcObjectType
-struct _ObjectType
-{
-    const char  *object;
-    Type_t      type;
-} ;
-
 /// wraps FcObjectType
-class ObjectType:
-    public _ObjectType
+class ObjectType
 {
+    private:
+        const void* m_ptr;
 
+    public:
+        ObjectType(const void* ptr);
+
+        const void* get_ptr() const;
+
+        const char* get_object();
+        Type_t get_type();
 };
 
 } // namespace fontconfig 

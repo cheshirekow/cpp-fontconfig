@@ -35,6 +35,9 @@ class Blanks
         void* m_ptr;
 
     public:
+        void* get_ptr();
+        const void* get_ptr() const;
+
         /// Constructs a new Blanks object wrapping the underlying
         /// c structure
         Blanks(void* ptr);

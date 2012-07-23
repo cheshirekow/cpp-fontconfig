@@ -311,6 +311,17 @@ enum SetName
 
 typedef setname::SetName SetName_t;
 
+namespace endian
+{
+    enum Endian
+    {
+        Big,
+        Little
+    };
+}
+
+typedef endian::Endian Endian_t;
+
 }
 
 
