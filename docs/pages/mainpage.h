@@ -38,6 +38,28 @@
  *  font file which matches a requested family name.
  *
  *  \include tutorial.cpp
+ *
+ *  Running the tutorial application yields the following:
+ *
+ *  Fontconfigmm is released under the GNU General Public License (GPL).
+ *
+ *  \verbatim
+josh@Nadie:~/Codes/cpp/builds/fontconfig/test/tutorial$ ./tutorial Ubuntu
+Font found for query [Ubuntu] at /usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf
+
+josh@Nadie:~/Codes/cpp/builds/fontconfig/test/tutorial$ ./tutorial UbuntuMono
+Font found for query [UbuntuMono] at /usr/share/fonts/truetype/ubuntu-font-family/UbuntuMono-R.ttf
+
+josh@Nadie:~/Codes/cpp/builds/fontconfig/test/tutorial$ ./tutorial Times
+Font found for query [Times] at /usr/share/fonts/X11/Type1/n021003l.pfb
+
+josh@Nadie:~/Codes/cpp/builds/fontconfig/test/tutorial$ ./tutorial Arial
+Font found for query [Arial] at /usr/share/fonts/truetype/msttcorefonts/Arial.ttf
+
+josh@Nadie:~/Codes/cpp/builds/fontconfig/test/tutorial$ ./tutorial Sans
+Font found for query [Sans] at /usr/share/fonts/truetype/ttf-dejavu/DejaVuSans.ttf
+
+\endverbatim
  */
 
 
