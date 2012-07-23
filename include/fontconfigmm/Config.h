@@ -152,7 +152,7 @@ class Config
         /**
          *  Returns the current default configuration.
          */
-        Config getCurrent();
+        static Config getCurrent();
 
 
         /// Check timestamps on config files

@@ -34,6 +34,7 @@ add_library( ${CMAKE_PROJECT_NAME}
                 String.cpp
                 StrList.cpp
                 StrSet.cpp
+                TypeMap.cpp
                 )
  
 #add_executable( ${CMAKE_PROJECT_NAME} main.cpp Application.cpp)

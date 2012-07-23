@@ -41,7 +41,7 @@ const unsigned int VERSION  = ((MAJOR * 10000) + (MINOR * 100) + (REVISION));
  * changes in any non-compatible way.  Try to avoid such changes as
  * it means multiple copies of the font information.
  */
-const char* CACHE_VERSION = "3";
+const char* const CACHE_VERSION = "3";
 
 
 typedef unsigned char   Char8_t;
@@ -51,63 +51,117 @@ typedef int             Bool_t;
 typedef int             Object_t;
 
 /// property keys
-const char* FAMILY          = "family";         ///< String
-const char* STYLE           = "style";          ///< String
-const char* SLANT           = "slant";          ///< Int
-const char* WEIGHT          = "weight";         ///< Int
-const char* SIZE            = "size";           ///< Double
-const char* ASPECT          = "aspect";         ///< Double
-const char* PIXEL_SIZE      = "pixelsize";      ///< Double
-const char* SPACING         = "spacing";        ///< Int
-const char* FOUNDRY         = "foundry";        ///< String
-const char* ANTIALIAS       = "antialias";      ///< Bool (depends)
-const char* HINTING         = "hinting";        ///< Bool (true)
-const char* HINT_STYLE      = "hintstyle";      ///< Int
-const char* VERTICAL_LAYOUT = "verticallayout"; ///< Bool (false)
-const char* AUTOHINT        = "autohint";       ///< Bool (false)
+const char* const FAMILY          = "family";         ///< String
+const char* const STYLE           = "style";          ///< String
+const char* const SLANT           = "slant";          ///< Int
+const char* const WEIGHT          = "weight";         ///< Int
+const char* const SIZE            = "size";           ///< Double
+const char* const ASPECT          = "aspect";         ///< Double
+const char* const PIXEL_SIZE      = "pixelsize";      ///< Double
+const char* const SPACING         = "spacing";        ///< Int
+const char* const FOUNDRY         = "foundry";        ///< String
+const char* const ANTIALIAS       = "antialias";      ///< Bool (depends)
+const char* const HINTING         = "hinting";        ///< Bool (true)
+const char* const HINT_STYLE      = "hintstyle";      ///< Int
+const char* const VERTICAL_LAYOUT = "verticallayout"; ///< Bool (false)
+const char* const AUTOHINT        = "autohint";       ///< Bool (false)
 
 /* GLOBAL_ADVANCE is deprecated. this is simply ignored on freetype 2.4.5 or later */
-const char* GLOBAL_ADVANCE  = "globaladvance";  ///< Bool (true)
-const char* WIDTH           = "width";          ///< Int
-const char* FILE            = "file";           ///< String
-const char* INDEX           = "index";          ///< Int
-const char* FT_FACE         = "ftface";         ///< FT_Face
-const char* RASTERIZER      = "rasterizer";     ///< String
-const char* OUTLINE         = "outline";        ///< Bool
-const char* SCALABLE        = "scalable";       ///< Bool
-const char* SCALE           = "scale";          ///< double
-const char* DPI             = "dpi";            ///< double
-const char* RGBA            = "rgba";           ///< Int
-const char* MINSPACE        = "minspace";       ///< Bool use minimum line spacing
-const char* SOURCE          = "source";         ///< String (deprecated)
-const char* CHARSET         = "charset";        ///< CharSet
-const char* LANG            = "lang";           ///< String RFC 3066 langs
-const char* FONTVERSION     = "fontversion";    ///< Int from 'head' table
-const char* FULLNAME        = "fullname";       ///< String
-const char* FAMILYLANG      = "familylang";     ///< String RFC 3066 langs
-const char* STYLELANG       = "stylelang";      ///< String RFC 3066 langs
-const char* FULLNAMELANG    = "fullnamelang";   ///< String RFC 3066 langs
-const char* CAPABILITY      = "capability";     ///< String
-const char* FONTFORMAT      = "fontformat";     ///< String
-const char* EMBOLDEN        = "embolden";       ///<  Bool - true if emboldening needed
-const char* EMBEDDED_BITMAP = "embeddedbitmap"; ///< Bool - true to enable embedded bitmaps
-const char* DECORATIVE      = "decorative";     ///< Bool - true if style is a decorative variant
-const char* LCD_FILTER      = "lcdfilter";      ///< Int
-const char* NAMELANG        = "namelang";       ///< String RFC 3866 langs
+const char* const GLOBAL_ADVANCE  = "globaladvance";  ///< Bool (true)
+const char* const WIDTH           = "width";          ///< Int
+const char* const FILE            = "file";           ///< String
+const char* const INDEX           = "index";          ///< Int
+const char* const FT_FACE         = "ftface";         ///< FT_Face
+const char* const RASTERIZER      = "rasterizer";     ///< String
+const char* const OUTLINE         = "outline";        ///< Bool
+const char* const SCALABLE        = "scalable";       ///< Bool
+const char* const SCALE           = "scale";          ///< double
+const char* const DPI             = "dpi";            ///< double
+const char* const RGBA            = "rgba";           ///< Int
+const char* const MINSPACE        = "minspace";       ///< Bool use minimum line spacing
+const char* const SOURCE          = "source";         ///< String (deprecated)
+const char* const CHARSET         = "charset";        ///< CharSet
+const char* const LANG            = "lang";           ///< String RFC 3066 langs
+const char* const FONTVERSION     = "fontversion";    ///< Int from 'head' table
+const char* const FULLNAME        = "fullname";       ///< String
+const char* const FAMILYLANG      = "familylang";     ///< String RFC 3066 langs
+const char* const STYLELANG       = "stylelang";      ///< String RFC 3066 langs
+const char* const FULLNAMELANG    = "fullnamelang";   ///< String RFC 3066 langs
+const char* const CAPABILITY      = "capability";     ///< String
+const char* const FONTFORMAT      = "fontformat";     ///< String
+const char* const EMBOLDEN        = "embolden";       ///<  Bool - true if emboldening needed
+const char* const EMBEDDED_BITMAP = "embeddedbitmap"; ///< Bool - true to enable embedded bitmaps
+const char* const DECORATIVE      = "decorative";     ///< Bool - true if style is a decorative variant
+const char* const LCD_FILTER      = "lcdfilter";      ///< Int
+const char* const NAMELANG        = "namelang";       ///< String RFC 3866 langs
+
+namespace key
+{
+
+enum Key
+{
+    FAMILY,
+    STYLE,
+    SLANT,
+    WEIGHT,
+    SIZE,
+    ASPECT,
+    PIXEL_SIZE,
+    SPACING,
+    FOUNDRY,
+    ANTIALIAS,
+    HINTING,
+    HINT_STYLE,
+    VERTICAL_LAYOUT,
+    AUTOHINT,
+    GLOBAL_ADVANCE,
+    WIDTH,
+    FILE,
+    INDEX,
+    FT_FACE,
+    RASTERIZER,
+    OUTLINE,
+    SCALABLE,
+    SCALE,
+    DPI,
+    RGBA,
+    MINSPACE,
+    SOURCE,
+    CHARSET,
+    LANG,
+    FONTVERSION,
+    FULLNAME,
+    FAMILYLANG,
+    STYLELANG,
+    FULLNAMELANG,
+    CAPABILITY,
+    FONTFORMAT,
+    EMBOLDEN,
+    EMBEDDED_BITMAP,
+    DECORATIVE,
+    LCD_FILTER,
+    NAMELANG,
+};
+
+}
+
+typedef key::Key Key_t;
+
+
 
 // these "3" should probably not be written by hand, but I'm trying to
 // avoid any macros... this can be done with boost::mpl
 // (http://stackoverflow.com/questions/4693819/c-template-string-concatenation)
 // but it seems kind of ridiculous to add that dependency to save 6 seconds
 // of maintanance
-const char* CACHE_SUFFIX    = ".cache-3";
-const char* DIR_CACHE_FILE  = "fonts.cache-3";
-const char* USER_CACHE_FILE = ".fonts.cache-3";
+const char* const CACHE_SUFFIX    = ".cache-3";
+const char* const DIR_CACHE_FILE  = "fonts.cache-3";
+const char* const USER_CACHE_FILE = ".fonts.cache-3";
 
 // Adjust outline rasterizer
-const char* CHAR_WIDTH  = "charwidth";  ///< Int
-const char* CHAR_HEIGHT = "charheight"; ///< Int
-const char* MATRIX      = "matrix";     ///< FcMatrix
+const char* const CHAR_WIDTH  = "charwidth";  ///< Int
+const char* const CHAR_HEIGHT = "charheight"; ///< Int
+const char* const MATRIX      = "matrix";     ///< FcMatrix
 
 
 

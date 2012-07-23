@@ -12,11 +12,15 @@
 #include <fontconfigmm/common.h>
 #include <fontconfigmm/CharSet.h>
 #include <fontconfigmm/LangSet.h>
-#include "fontconfigmm/Matrix.h"
+#include <fontconfigmm/Matrix.h>
 #include <fontconfigmm/ObjectSet.h>
+#include <fontconfigmm/TypeMap.h>
 
 namespace fontconfig
 {
+
+
+class Config;
 
 
 /// holds a set of names with associated value lists;
@@ -116,6 +120,16 @@ class Pattern
          *  that position or not.
          */
         bool remove (const char* object, int id);
+
+        /// Add an object to the pattern
+        /**
+         *
+         */
+        template <Key_t Key>
+        bool add( typename TypeMap<Key>::Type param )
+        {
+            return this->add(TypeMap<Key>::object, param);
+        }
 
         /// Add an integer object
         /**
@@ -518,6 +532,26 @@ class Pattern
          *      and scale (default 1).
          */
         void defaultSubstitute();
+
+        /// Execute substitutions
+        /**
+         *  Calls FcConfigSubstituteWithPat setting p_pat to NULL. Returns
+         *  FcFalse if the substitution cannot be performed (due to allocation
+         *  failure). Otherwise returns FcTrue. If config is NULL, the current
+         *  configuration is used.
+         */
+        bool substitute (
+                    Config      c,
+                    MatchKind_t kind);
+
+        /// Execute substitutions
+        /**
+         *  Calls FcConfigSubstituteWithPat setting p_pat to NULL. Returns
+         *  FcFalse if the substitution cannot be performed (due to allocation
+         *  failure). Otherwise returns FcTrue. If config is NULL, the current
+         *  configuration is used.
+         */
+        bool substitute(MatchKind_t kind);
 
 };
 

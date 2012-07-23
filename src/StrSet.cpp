@@ -12,6 +12,11 @@
 namespace fontconfig
 {
 
+StrSet::StrSet(void* ptr):
+    m_ptr(ptr)
+{
+
+}
 
 StrSet StrSet::create(void)
 {
