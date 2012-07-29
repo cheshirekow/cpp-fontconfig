@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/ObjectType.h>
+#include <cppfontconfig/ObjectType.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

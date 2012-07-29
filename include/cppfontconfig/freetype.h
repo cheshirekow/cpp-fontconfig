@@ -27,7 +27,7 @@
 #ifndef FONTCONFIGMM_FREETYPE_H_
 #define FONTCONFIGMM_FREETYPE_H_
 
-#include <fontconfigmm/common.h>
+#include <cppfontconfig/common.h>
 
 namespace freetype
 {

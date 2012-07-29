@@ -27,12 +27,12 @@
 #ifndef FONTCONFIGMM_PATTERN_H_
 #define FONTCONFIGMM_PATTERN_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/CharSet.h>
-#include <fontconfigmm/LangSet.h>
-#include <fontconfigmm/Matrix.h>
-#include <fontconfigmm/ObjectSet.h>
-#include <fontconfigmm/TypeMap.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/CharSet.h>
+#include <cppfontconfig/LangSet.h>
+#include <cppfontconfig/Matrix.h>
+#include <cppfontconfig/ObjectSet.h>
+#include <cppfontconfig/TypeMap.h>
 
 namespace fontconfig
 {

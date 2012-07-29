@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/Constant.h>
+#include <cppfontconfig/Constant.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

@@ -25,7 +25,7 @@
  */
 
 
-#include <fontconfigmm/freetype.h>
+#include <cppfontconfig/freetype.h>
 #include <fontconfig/fontconfig.h>
 #include <fontconfig/fcfreetype.h>
 

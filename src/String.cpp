@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/String.h>
+#include <cppfontconfig/String.h>
 #include <fontconfig/fontconfig.h>
 #include <cassert>
 

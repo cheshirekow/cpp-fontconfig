@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/Atomic.h>
+#include <cppfontconfig/Atomic.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

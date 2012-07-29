@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/TypeMap.h>
+#include <cppfontconfig/TypeMap.h>
 
 #define FCMM_INIT_KEY(KEY)  \
 const char* const TypeMap<key::KEY>::object = KEY;   \

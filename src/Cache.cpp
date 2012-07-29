@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/Cache.h>
+#include <cppfontconfig/Cache.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

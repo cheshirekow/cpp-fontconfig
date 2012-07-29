@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/name.h>
+#include <cppfontconfig/name.h>
 #include <fontconfig/fontconfig.h>
 #include <cassert>
 

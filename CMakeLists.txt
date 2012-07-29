@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
 # defines the project name
-project (fontconfigmm)
+project (cppfontconfig)
 set( ${CMAKE_PROJECT_NAME}_VERSION_MAJOR 0 )
 set( ${CMAKE_PROJECT_NAME}_VERSION_MINOR 1 )
 set( ${CMAKE_PROJECT_NAME}_VERSION_BUGFIX 0 )

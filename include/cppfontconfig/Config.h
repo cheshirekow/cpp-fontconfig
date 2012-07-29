@@ -27,11 +27,11 @@
 #ifndef FONTCONFIGMM_CONFIG_H_
 #define FONTCONFIGMM_CONFIG_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/StrList.h>
-#include <fontconfigmm/Blanks.h>
-#include <fontconfigmm/Pattern.h>
-#include <fontconfigmm/FontSet.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/StrList.h>
+#include <cppfontconfig/Blanks.h>
+#include <cppfontconfig/Pattern.h>
+#include <cppfontconfig/FontSet.h>
 
 namespace fontconfig
 {

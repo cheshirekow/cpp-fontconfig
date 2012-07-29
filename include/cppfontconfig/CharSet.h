@@ -27,7 +27,7 @@
 #ifndef FONTCONFIGMM_CHARSET_H_
 #define FONTCONFIGMM_CHARSET_H_
 
-#include <fontconfigmm/common.h>
+#include <cppfontconfig/common.h>
 #include <unistd.h>
 
 namespace fontconfig

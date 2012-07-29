@@ -27,8 +27,8 @@
 #ifndef FONTCONFIGMM_CACHE_H_
 #define FONTCONFIGMM_CACHE_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/Config.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/Config.h>
 #include <unistd.h>
 #include <sys/stat.h>
 

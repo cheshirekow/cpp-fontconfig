@@ -28,9 +28,9 @@
 #define FONTCONFIGMM_NAME_H_
 
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/ObjectType.h>
-#include <fontconfigmm/Constant.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/ObjectType.h>
+#include <cppfontconfig/Constant.h>
 
 namespace fontconfig {
 

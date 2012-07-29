@@ -27,10 +27,10 @@
 #ifndef FONTCONFIGMM_FILE_H_
 #define FONTCONFIGMM_FILE_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/FontSet.h>
-#include <fontconfigmm/StrSet.h>
-#include <fontconfigmm/Blanks.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/FontSet.h>
+#include <cppfontconfig/StrSet.h>
+#include <cppfontconfig/Blanks.h>
 
 
 

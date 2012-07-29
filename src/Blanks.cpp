@@ -25,7 +25,7 @@
  */
 
 #include <cassert>
-#include <fontconfigmm/Blanks.h>
+#include <cppfontconfig/Blanks.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

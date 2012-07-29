@@ -17,62 +17,36 @@
  *  along with Fontconfigmm.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   init.cpp
+ *  \file   cppfontconfig.h
  *
  *  \date   Jul 23, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)
  *  \brief  
  */
 
+#ifndef FONTCONFIGMM_FONTCONFIGMM_H_
+#define FONTCONFIGMM_FONTCONFIGMM_H_
+
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/Atomic.h>
+#include <cppfontconfig/Blanks.h>
+#include <cppfontconfig/Cache.h>
+#include <cppfontconfig/CharSet.h>
+#include <cppfontconfig/Config.h>
+#include <cppfontconfig/Constant.h>
+#include <cppfontconfig/file.h>
+#include <cppfontconfig/FontSet.h>
+//#include <cppfontconfig/freetype.h>
 #include <cppfontconfig/init.h>
-#include <fontconfig/fontconfig.h>
+#include <cppfontconfig/LangSet.h>
+#include <cppfontconfig/Matrix.h>
+#include <cppfontconfig/name.h>
+#include <cppfontconfig/ObjectSet.h>
+#include <cppfontconfig/ObjectType.h>
+#include <cppfontconfig/Pattern.h>
+#include <cppfontconfig/string.h>
+#include <cppfontconfig/String.h>
+#include <cppfontconfig/StrList.h>
+#include <cppfontconfig/StrSet.h>
 
-namespace fontconfig
-{
-
-
-Config initLoadConfig()
-{
-    return Config( FcInitLoadConfig() );
-}
-
-Config initLoadConfigAndFonts()
-{
-    return Config( FcInitLoadConfigAndFonts() );
-}
-
-bool init()
-{
-    return FcInit();
-}
-
-void fini()
-{
-    FcFini();
-}
-
-int getVersion()
-{
-    return FcGetVersion();
-}
-
-bool initReinitialize()
-{
-    return FcInitReinitialize();
-}
-
-bool initBringUptoDate()
-{
-    return FcInitBringUptoDate();
-}
-
-
-}
-
-
-
-
-
-
-
-
+#endif // FONTCONFIGMM_H_

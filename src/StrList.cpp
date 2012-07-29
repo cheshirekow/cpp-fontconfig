@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/StrList.h>
+#include <cppfontconfig/StrList.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

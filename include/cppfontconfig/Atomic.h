@@ -27,7 +27,7 @@
 #ifndef FONTCONFIGMM_ATOMIC_H_
 #define FONTCONFIGMM_ATOMIC_H_
 
-#include <fontconfigmm/common.h>
+#include <cppfontconfig/common.h>
 
 namespace fontconfig
 {

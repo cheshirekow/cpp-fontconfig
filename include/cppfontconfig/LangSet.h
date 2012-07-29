@@ -27,8 +27,8 @@
 #ifndef FONTCONFIGMM_LANGSET_H_
 #define FONTCONFIGMM_LANGSET_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/StrSet.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/StrSet.h>
 
 namespace fontconfig
 {

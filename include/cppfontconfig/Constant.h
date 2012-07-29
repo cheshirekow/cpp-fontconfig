@@ -17,36 +17,34 @@
  *  along with Fontconfigmm.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   fontconfigmm.h
+ *  \file   Constant.h
  *
  *  \date   Jul 23, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)
  *  \brief  
  */
 
-#ifndef FONTCONFIGMM_FONTCONFIGMM_H_
-#define FONTCONFIGMM_FONTCONFIGMM_H_
+#ifndef FONTCONFIGMM_CONSTANT_H_
+#define FONTCONFIGMM_CONSTANT_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/Atomic.h>
-#include <fontconfigmm/Blanks.h>
-#include <fontconfigmm/Cache.h>
-#include <fontconfigmm/CharSet.h>
-#include <fontconfigmm/Config.h>
-#include <fontconfigmm/Constant.h>
-#include <fontconfigmm/file.h>
-#include <fontconfigmm/FontSet.h>
-//#include <fontconfigmm/freetype.h>
-#include <fontconfigmm/init.h>
-#include <fontconfigmm/LangSet.h>
-#include <fontconfigmm/Matrix.h>
-#include <fontconfigmm/name.h>
-#include <fontconfigmm/ObjectSet.h>
-#include <fontconfigmm/ObjectType.h>
-#include <fontconfigmm/Pattern.h>
-#include <fontconfigmm/string.h>
-#include <fontconfigmm/String.h>
-#include <fontconfigmm/StrList.h>
-#include <fontconfigmm/StrSet.h>
+#include <cppfontconfig/common.h>
 
-#endif // FONTCONFIGMM_H_
+namespace fontconfig
+{
+
+class Constant
+{
+    private:
+        const void* m_ptr;
+
+    public:
+        Constant(const void* ptr);
+
+        const Char8_t*  get_name();
+        const char*     get_object();
+        int             get_value();
+};
+
+} // namespace fontconfig 
+
+#endif // CONSTANT_H_

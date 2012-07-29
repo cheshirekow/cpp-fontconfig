@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/FontSet.h>
+#include <cppfontconfig/FontSet.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

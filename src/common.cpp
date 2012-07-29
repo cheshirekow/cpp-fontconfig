@@ -25,7 +25,7 @@
  */
 
 
-namespace fontconfigmm
+namespace cppfontconfig
 {
 
 

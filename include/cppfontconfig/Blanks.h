@@ -27,7 +27,7 @@
 #ifndef FONTCONFIGMM_BLANKS_H_
 #define FONTCONFIGMM_BLANKS_H_
 
-#include <fontconfigmm/common.h>
+#include <cppfontconfig/common.h>
 
 namespace fontconfig
 {

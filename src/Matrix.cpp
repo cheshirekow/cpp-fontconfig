@@ -24,7 +24,7 @@
  *  \brief  
  */
 
-#include <fontconfigmm/Matrix.h>
+#include <cppfontconfig/Matrix.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

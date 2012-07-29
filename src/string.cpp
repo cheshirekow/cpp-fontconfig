@@ -25,7 +25,7 @@
  */
 
 
-#include <fontconfigmm/string.h>
+#include <cppfontconfig/string.h>
 #include <fontconfig/fontconfig.h>
 
 

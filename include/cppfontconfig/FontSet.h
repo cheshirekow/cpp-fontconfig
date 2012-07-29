@@ -27,8 +27,8 @@
 #ifndef FONTCONFIGMM_FONTSET_H_
 #define FONTCONFIGMM_FONTSET_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/Pattern.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/Pattern.h>
 
 namespace fontconfig
 {

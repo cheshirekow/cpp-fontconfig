@@ -27,8 +27,8 @@
 #ifndef FONTCONFIGMM_INIT_H_
 #define FONTCONFIGMM_INIT_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/Config.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/Config.h>
 
 namespace fontconfig
 {

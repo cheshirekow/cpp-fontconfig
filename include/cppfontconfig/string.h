@@ -27,7 +27,7 @@
 #ifndef FONTCONFIGMM_STRING_H_
 #define FONTCONFIGMM_STRING_H_
 
-#include <fontconfigmm/common.h>
+#include <cppfontconfig/common.h>
 
 namespace fontconfig {
 

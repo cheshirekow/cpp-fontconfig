@@ -24,8 +24,8 @@
  *  \brief  
  */
 
-#include <fontconfigmm/Pattern.h>
-#include <fontconfigmm/Config.h>
+#include <cppfontconfig/Pattern.h>
+#include <cppfontconfig/Config.h>
 #include <fontconfig/fontconfig.h>
 
 namespace fontconfig

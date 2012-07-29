@@ -17,34 +17,36 @@
  *  along with Fontconfigmm.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   Constant.h
+ *  \file   ObjectType.h
  *
- *  \date   Jul 23, 2012
+ *  \date   Jul 20, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)
  *  \brief  
  */
 
-#ifndef FONTCONFIGMM_CONSTANT_H_
-#define FONTCONFIGMM_CONSTANT_H_
+#ifndef FONTCONFIGMM_OBJECTTYPE_H_
+#define FONTCONFIGMM_OBJECTTYPE_H_
 
-#include <fontconfigmm/common.h>
+#include <cppfontconfig/common.h>
 
 namespace fontconfig
 {
 
-class Constant
+/// wraps FcObjectType
+class ObjectType
 {
     private:
         const void* m_ptr;
 
     public:
-        Constant(const void* ptr);
+        ObjectType(const void* ptr);
 
-        const Char8_t*  get_name();
-        const char*     get_object();
-        int             get_value();
+        const void* get_ptr() const;
+
+        const char* get_object();
+        Type_t get_type();
 };
 
 } // namespace fontconfig 
 
-#endif // CONSTANT_H_
+#endif // OBJECTTYPE_H_

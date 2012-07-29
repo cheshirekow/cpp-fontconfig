@@ -27,8 +27,8 @@
 #ifndef FONTCONFIGMM_TYPEMAP_H_
 #define FONTCONFIGMM_TYPEMAP_H_
 
-#include <fontconfigmm/common.h>
-#include <fontconfigmm/CharSet.h>
+#include <cppfontconfig/common.h>
+#include <cppfontconfig/CharSet.h>
 
 #define FCMM_MAP_KEY(KEY,TYPE)                  \
 template<>                                      \
