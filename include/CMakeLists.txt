@@ -1,0 +1,1 @@
+install( DIRECTORY cppfontconfig DESTINATION include )

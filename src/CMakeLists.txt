@@ -29,6 +29,13 @@ add_library( ${CMAKE_PROJECT_NAME}
                 StrSet.cpp
                 TypeMap.cpp
                 )
+                
+ 
+INSTALL( TARGETS ${CMAKE_PROJECT_NAME}
+  RUNTIME DESTINATION bin
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+)
  
 else()
     message( WARNING 
