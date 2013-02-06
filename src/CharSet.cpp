@@ -34,13 +34,15 @@ namespace fontconfig
 template<>
 void RefPtr<CharSet>::reference()
 {
-    m_ptr = FcCharSetCopy( m_ptr );
+    if(m_ptr)
+        m_ptr = FcCharSetCopy( m_ptr );
 }
 
 template<>
 void RefPtr<CharSet>::dereference()
 {
-    FcCharSetDestroy( m_ptr );
+    if(m_ptr)
+        FcCharSetDestroy( m_ptr );
 }
 
 

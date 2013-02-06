@@ -60,7 +60,7 @@ int main( int argc, char** argv )
         pat.addBuiltIn<fc::key::FAMILY>( (const fc::Char8_t*)argv[1] );
 
         // get a pointer to the default configuration
-        fc::Config  config = fc::Config::getCurrent();
+        fc::RefPtr<fc::Config> config = fc::Config::getCurrent();
 
         // perform substitutions
         pat.substitute(fc::match::Pattern);
@@ -68,7 +68,7 @@ int main( int argc, char** argv )
 
         // get the match
         fc::Result_t result;
-        fc::Pattern match = config.fontMatch(pat, result);
+        fc::Pattern match = config->fontMatch(pat, result);
 
         // get the closest matching font file
         fc::Char8_t*    file;

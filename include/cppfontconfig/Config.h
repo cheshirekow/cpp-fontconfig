@@ -27,7 +27,9 @@
 #ifndef CPPFONTCONFIG_CONFIG_H_
 #define CPPFONTCONFIG_CONFIG_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/StrList.h>
 #include <cppfontconfig/Blanks.h>
 #include <cppfontconfig/Pattern.h>
@@ -36,6 +38,8 @@
 
 namespace fontconfig
 {
+
+class Config;
 
 /// holds a complete configuration of the library;
 /**
@@ -51,111 +55,31 @@ namespace fontconfig
  *  There is a default configuration which applications may use by passing 0
  *  to any function using the data within an FcConfig.
  */
-class Config
+class ConfigDelegate
 {
     private:
-        void* m_ptr;
+        FcConfig* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit ConfigDelegate(FcConfig* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        ConfigDelegate( const ConfigDelegate& other );
+
+        /// not assignable
+        ConfigDelegate& operator=( const ConfigDelegate& other );
 
     public:
-        ///
-        /**
-         *
-         */
-        Config(void* ptr);
+        friend class RefPtr<Config>;
 
-        ///
-        /**
-         *
-         */
-        Config( const Config& config );
-
-        ///
-        /**
-         *
-         */
-        ~Config();
-
-
-        ///
-        /**
-         *
-         */
-        void* get_ptr();
-
-
-        ///
-        /**
-         *
-         */
-        const void* get_ptr() const;
-
-
-        /// return the current home directory.
-        /**
-         *  Return the current user's home directory, if it is available, and
-         *  if using it is enabled, and NULL otherwise. See also
-         *  FcConfigEnableHome).
-         */
-        static Char8_t* home(void);
-
-
-        /// controls use of the home directory.
-        /**
-         *  If enable is FcTrue, then Fontconfig will use various files which
-         *  are specified relative to the user's home directory (using the ~
-         *  notation in the configuration). When enable is FcFalse, then all
-         *  use of the home directory in these contexts will be disabled. The
-         *  previous setting of the value is returned.
-         */
-        static bool     enableHome(bool enable);
-
-
-        ///  Find a config file
-        /**
-         *  Given the specified external entity name, return the associated
-         *  filename. This provides applications a way to convert various
-         *  configuration file references into filename form.
-         *
-         *  A null or empty name indicates that the default configuration file
-         *  should be used; which file this references can be overridden with
-         *  the FONTCONFIG_FILE environment variable. Next, if the name starts
-         *  with ~, it refers to a file in the current users home directory.
-         *  Otherwise if the name doesn't start with '/', it refers to a file
-         *  in the default configuration directory; the built-in default
-         *  directory can be overridden with the FONTCONFIG_PATH environment
-         *  variable.
-         */
-        static Char8_t* filename(const Char8_t* url );
-
-
-        /// Create a configuration
-        /**
-         *  Creates an empty configuration.
-         */
-        static Config   create();
-
-
-        /// Increment config reference count
-        /**
-         *  Add another reference to config. Configs are freed only when the
-         *  reference count reaches zero. If config is NULL, the current
-         *  configuration is used. In that case this function will be similar
-         *  to FcConfigGetCurrent() except that it increments the reference
-         *  count before returning and the user is responsible for destroying
-         *  the configuration when not needed anymore.
-         */
-        // Config reference();
-
-
-        /// Destroy a configuration
-        /**
-         *  Decrements the config reference count. If all references are gone,
-         *  destroys the configuration and any data associated with it. Note
-         *  that calling this function with the return from FcConfigGetCurrent
-         *  will cause a new configuration to be created for use as current
-         *  configuration.
-         */
-        //void destroy();
+        ConfigDelegate* operator->(){ return this; }
+        const ConfigDelegate* operator->() const { return this; }
 
 
         /// Set configuration as default
@@ -165,13 +89,6 @@ class Config
          *  fails.
          */
         bool setCurrent();
-
-
-        /// Return current configuration
-        /**
-         *  Returns the current default configuration.
-         */
-        static Config getCurrent();
 
 
         /// Check timestamps on config files
@@ -469,8 +386,7 @@ class Config
          *  error occurred while loading the file, either a parse error,
          *  semantic error or allocation failure. Otherwise returns FcTrue.
          */
-        static bool parseAndLoad (
-                    Config          config,
+        bool parseAndLoad (
                     const Char8_t   *file,
                     bool            complain);
 
@@ -489,6 +405,64 @@ class Config
          *  registered to config.
          */
         void createTagFile() const;
+};
+
+
+struct Config
+{
+    typedef ConfigDelegate Delegate;
+    typedef FcConfig*      Storage;
+    typedef FcConfig*      cobjptr;
+
+    /// return the current home directory.
+    /**
+     *  Return the current user's home directory, if it is available, and
+     *  if using it is enabled, and NULL otherwise. See also
+     *  FcConfigEnableHome).
+     */
+    static Char8_t* home(void);
+
+
+    /// controls use of the home directory.
+    /**
+     *  If enable is FcTrue, then Fontconfig will use various files which
+     *  are specified relative to the user's home directory (using the ~
+     *  notation in the configuration). When enable is FcFalse, then all
+     *  use of the home directory in these contexts will be disabled. The
+     *  previous setting of the value is returned.
+     */
+    static bool     enableHome(bool enable);
+
+
+    ///  Find a config file
+    /**
+     *  Given the specified external entity name, return the associated
+     *  filename. This provides applications a way to convert various
+     *  configuration file references into filename form.
+     *
+     *  A null or empty name indicates that the default configuration file
+     *  should be used; which file this references can be overridden with
+     *  the FONTCONFIG_FILE environment variable. Next, if the name starts
+     *  with ~, it refers to a file in the current users home directory.
+     *  Otherwise if the name doesn't start with '/', it refers to a file
+     *  in the default configuration directory; the built-in default
+     *  directory can be overridden with the FONTCONFIG_PATH environment
+     *  variable.
+     */
+    static Char8_t* filename(const Char8_t* url );
+
+
+    /// Create a configuration
+    /**
+     *  Creates an empty configuration.
+     */
+    static RefPtr<Config>  create();
+
+    /// Return current configuration
+    /**
+     *  Returns the current default configuration.
+     */
+    static RefPtr<Config> getCurrent();
 };
 
 } // namespace fontconfig 

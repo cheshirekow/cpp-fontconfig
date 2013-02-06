@@ -31,14 +31,14 @@ namespace fontconfig
 {
 
 
-Config initLoadConfig()
+RefPtr<Config> initLoadConfig()
 {
-    return Config( FcInitLoadConfig() );
+    return RefPtr<Config>( FcInitLoadConfig() );
 }
 
-Config initLoadConfigAndFonts()
+RefPtr<Config> initLoadConfigAndFonts()
 {
-    return Config( FcInitLoadConfigAndFonts() );
+    return RefPtr<Config>( FcInitLoadConfigAndFonts() );
 }
 
 bool init()

@@ -559,7 +559,7 @@ class Pattern
          *  configuration is used.
          */
         bool substitute (
-                    Config      c,
+                    RefPtr<Config>      c,
                     MatchKind_t kind);
 
         /// Execute substitutions

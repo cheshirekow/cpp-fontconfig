@@ -59,17 +59,17 @@ void CacheDelegate::unload()
 }
 
 
-RefPtr<Cache> Cache::load(const Char8_t* dir, Config config, Char8_t** cache_file)
+RefPtr<Cache> Cache::load(const Char8_t* dir, RefPtr<Config> config, Char8_t** cache_file)
 {
     return RefPtr<Cache>(
-            FcDirCacheLoad(dir, (FcConfig*)config.get_ptr(), cache_file)
+            FcDirCacheLoad(dir, config.subvert(), cache_file)
     );
 }
 
-RefPtr<Cache> Cache::read(const Char8_t* dir, bool force, Config config)
+RefPtr<Cache> Cache::read(const Char8_t* dir, bool force, RefPtr<Config> config)
 {
     return RefPtr<Cache>(
-            FcDirCacheRead(dir, force ? FcTrue : FcFalse, (FcConfig*)config.get_ptr() )
+            FcDirCacheRead(dir, force ? FcTrue : FcFalse, config.subvert() )
     );
 }
 

@@ -145,7 +145,7 @@ struct Cache
      *  unless that is NULL. See also FcDirCacheRead.
      */
     static RefPtr<Cache> load( const Char8_t* dir,
-                        Config config,
+                        RefPtr<Config> config,
                         Char8_t** cache_file );
 
     /// read or construct a directory cache
@@ -156,7 +156,7 @@ struct Cache
      */
     static RefPtr<Cache> read( const Char8_t* dir,
                         bool force,
-                        Config config );
+                        RefPtr<Config> config );
 
     /// load a cache file
     /**

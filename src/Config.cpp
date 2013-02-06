@@ -30,154 +30,133 @@
 namespace fontconfig
 {
 
-Config::Config(void* ptr):
-    m_ptr(ptr)
+/// Increment config reference count
+/**
+ *  Add another reference to config. Configs are freed only when the
+ *  reference count reaches zero. If config is NULL, the current
+ *  configuration is used. In that case this function will be similar
+ *  to FcConfigGetCurrent() except that it increments the reference
+ *  count before returning and the user is responsible for destroying
+ *  the configuration when not needed anymore.
+ */
+template <>
+void RefPtr<Config>::reference()
 {
-
+    if(m_ptr)
+        m_ptr = FcConfigReference(m_ptr);
 }
 
-Config::Config(const Config& config)
+/// Destroy a configuration
+/**
+ *  Decrements the config reference count. If all references are gone,
+ *  destroys the configuration and any data associated with it. Note
+ *  that calling this function with the return from FcConfigGetCurrent
+ *  will cause a new configuration to be created for use as current
+ *  configuration.
+ */
+template <>
+void RefPtr<Config>::dereference()
 {
-    m_ptr = config.m_ptr;
-    FcConfigReference( (FcConfig*)m_ptr );
+    if(m_ptr)
+        FcConfigDestroy(m_ptr);
 }
 
-Config::~Config()
+
+
+bool ConfigDelegate::setCurrent()
 {
-    FcConfigDestroy( (FcConfig*)m_ptr );
+    return FcConfigSetCurrent( m_ptr  );
 }
 
-void* Config::get_ptr()
+
+
+bool ConfigDelegate::upToDate()
 {
-    return m_ptr;
+    return FcConfigUptoDate( m_ptr );
 }
 
-const void* Config::get_ptr() const
+bool ConfigDelegate::buildFonts()
 {
-    return m_ptr;
+    return FcConfigBuildFonts ( m_ptr );
 }
 
-Char8_t* Config::home(void)
+StrList ConfigDelegate::getFontDirs()
 {
-    return FcConfigHome();
+    return StrList( FcConfigGetFontDirs( m_ptr ) );
 }
 
-bool Config::enableHome(bool enable)
+StrList ConfigDelegate::getConfigDirs()
 {
-    return FcConfigEnableHome(enable ? FcTrue : FcFalse );
+    return StrList( FcConfigGetConfigDirs( m_ptr  ) );
 }
 
-Char8_t* Config::filename(const Char8_t* url)
+StrList ConfigDelegate::getConfigFiles()
 {
-    return FcConfigFilename(url);
+    return StrList( FcConfigGetConfigFiles( m_ptr  ) );
 }
 
-Config Config::create()
+RefPtr<Blanks> ConfigDelegate::getBlanks()
 {
-    return Config( FcConfigCreate() );
+    return RefPtr<Blanks>( FcConfigGetBlanks( m_ptr  ) ) ;
 }
 
-bool Config::setCurrent()
+StrList ConfigDelegate::getCacheDirs() const
 {
-    return FcConfigSetCurrent( (FcConfig*)m_ptr  );
+    return StrList( FcConfigGetCacheDirs( m_ptr  ) );
 }
 
-Config Config::getCurrent()
+int ConfigDelegate::getRescanInterval()
 {
-    // note: FcConfigGetCurrent does not increase reference count of the
-    // returned pointer so we use FcConfigReference(0) which returns
-    // the current but increases the reference count, we could also
-    // do that part ourselves if we wnated to
-    return Config( FcConfigReference(0) );
+    return FcConfigGetRescanInterval( m_ptr );
 }
 
-bool Config::upToDate()
+bool ConfigDelegate::setRescanInterval(int rescanInterval)
 {
-    return FcConfigUptoDate( (FcConfig*)m_ptr );
+    return FcConfigSetRescanInterval( m_ptr, rescanInterval );
 }
 
-bool Config::buildFonts()
+FontSet ConfigDelegate::getFonts(SetName_t set)
 {
-    return FcConfigBuildFonts ( (FcConfig*)m_ptr );
+    return FontSet( FcConfigGetFonts( m_ptr , (FcSetName) set ) );
 }
 
-StrList Config::getFontDirs()
+bool ConfigDelegate::appFontAddFile(const Char8_t* file)
 {
-    return StrList( FcConfigGetFontDirs( (FcConfig*)m_ptr ) );
+    return FcConfigAppFontAddFile( m_ptr , file );
 }
 
-StrList Config::getConfigDirs()
+bool ConfigDelegate::appFontAddDir(const Char8_t* dir)
 {
-    return StrList( FcConfigGetConfigDirs( (FcConfig*)m_ptr  ) );
+    return FcConfigAppFontAddDir( m_ptr , dir );
 }
 
-StrList Config::getConfigFiles()
+void ConfigDelegate::appFontClear()
 {
-    return StrList( FcConfigGetConfigFiles( (FcConfig*)m_ptr  ) );
+    return FcConfigAppFontClear( m_ptr );
 }
 
-RefPtr<Blanks> Config::getBlanks()
-{
-    return RefPtr<Blanks>( FcConfigGetBlanks( (FcConfig*)m_ptr  ) ) ;
-}
-
-StrList Config::getCacheDirs() const
-{
-    return StrList( FcConfigGetCacheDirs( (FcConfig*)m_ptr  ) );
-}
-
-int Config::getRescanInterval()
-{
-    return FcConfigGetRescanInterval( (FcConfig*)m_ptr );
-}
-
-bool Config::setRescanInterval(int rescanInterval)
-{
-    return FcConfigSetRescanInterval( (FcConfig*)m_ptr, rescanInterval );
-}
-
-FontSet Config::getFonts(SetName_t set)
-{
-    return FontSet( FcConfigGetFonts( (FcConfig*)m_ptr , (FcSetName) set ) );
-}
-
-bool Config::appFontAddFile(const Char8_t* file)
-{
-    return FcConfigAppFontAddFile( (FcConfig*)m_ptr , file );
-}
-
-bool Config::appFontAddDir(const Char8_t* dir)
-{
-    return FcConfigAppFontAddDir( (FcConfig*)m_ptr , dir );
-}
-
-void Config::appFontClear()
-{
-    return FcConfigAppFontClear( (FcConfig*)m_ptr );
-}
-
-bool Config::substituteWithPat(Pattern p, Pattern p_pat, MatchKind_t kind)
+bool ConfigDelegate::substituteWithPat(Pattern p, Pattern p_pat, MatchKind_t kind)
 {
     return FcConfigSubstituteWithPat(
-                (FcConfig*)m_ptr ,
+                m_ptr ,
                 (FcPattern*)p.get_ptr(),
                 (FcPattern*)p_pat.get_ptr(),
                 (FcMatchKind)kind );
 }
 
-bool Config::substitute(Pattern p, MatchKind_t kind)
+bool ConfigDelegate::substitute(Pattern p, MatchKind_t kind)
 {
     return FcConfigSubstitute(
-                (FcConfig*)m_ptr,
+                m_ptr,
                 (FcPattern*)p.get_ptr(),
                 (FcMatchKind)kind );
 }
 
-Pattern Config::fontMatch(Pattern p, Result_t& result)
+Pattern ConfigDelegate::fontMatch(Pattern p, Result_t& result)
 {
     FcResult result2;
     Pattern returnMe = Pattern(
-            FcFontMatch( (FcConfig*)m_ptr,
+            FcFontMatch( m_ptr,
                          (FcPattern*)p.get_ptr(),
                          &result2)
         );
@@ -187,7 +166,7 @@ Pattern Config::fontMatch(Pattern p, Result_t& result)
     return returnMe;
 }
 
-Pattern Config::fontSetMatch(FontSet* sets, int nsets, Pattern pattern,
+Pattern ConfigDelegate::fontSetMatch(FontSet* sets, int nsets, Pattern pattern,
         Result_t& result)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
@@ -198,7 +177,7 @@ Pattern Config::fontSetMatch(FontSet* sets, int nsets, Pattern pattern,
 
     Pattern returnMe(
             FcFontSetMatch(
-                    (FcConfig*)m_ptr,
+                    m_ptr,
                     ptrs,
                     nsets,
                     (FcPattern*)pattern.get_ptr(),
@@ -210,16 +189,16 @@ Pattern Config::fontSetMatch(FontSet* sets, int nsets, Pattern pattern,
     return returnMe;
 }
 
-Pattern Config::renderPrepare(Pattern pat, Pattern font)
+Pattern ConfigDelegate::renderPrepare(Pattern pat, Pattern font)
 {
     return Pattern(
-        FcFontRenderPrepare( (FcConfig*)m_ptr,
+        FcFontRenderPrepare( m_ptr,
                              (FcPattern*)pat.get_ptr(),
                              (FcPattern*)font.get_ptr() )
     );
 }
 
-FontSet Config::fontSetSort(
+FontSet ConfigDelegate::fontSetSort(
             FontSet* sets,
             int nsets,
             Pattern p,
@@ -236,7 +215,7 @@ FontSet Config::fontSetSort(
 
     FontSet returnMe(
             FcFontSetSort(
-                    (FcConfig*)m_ptr,
+                    m_ptr,
                     ptrs,
                     nsets,
                     (FcPattern*)p.get_ptr(),
@@ -253,7 +232,7 @@ FontSet Config::fontSetSort(
     return returnMe;
 }
 
-FontSet Config::fontSort(Pattern p, bool trim,
+FontSet ConfigDelegate::fontSort(Pattern p, bool trim,
                             RefPtr<CharSet>* csp, Result_t& result)
 {
     FcCharSet*  csp2;
@@ -262,7 +241,7 @@ FontSet Config::fontSort(Pattern p, bool trim,
     //FIXME: need to copy csp2 to csp, and add option to not return csp
 
     FontSet returnMe(
-            FcFontSort( (FcConfig*)m_ptr,
+            FcFontSort( m_ptr,
                         (FcPattern*)p.get_ptr(),
                         trim ? FcTrue : FcFalse,
                         csp ? &csp2 : (FcCharSet**)0,
@@ -275,14 +254,14 @@ FontSet Config::fontSort(Pattern p, bool trim,
     return returnMe;
 }
 
-FontSet Config::fontSetList(FontSet* sets, int nsets, Pattern p, ObjectSet os)
+FontSet ConfigDelegate::fontSetList(FontSet* sets, int nsets, Pattern p, ObjectSet os)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
     for(int i=0; i < nsets; i++)
         ptrs[i] = (FcFontSet*)sets[i].get_ptr();
 
     FontSet returnMe(
-                FcFontSetList( (FcConfig*)m_ptr,
+                FcFontSetList( m_ptr,
                                 ptrs,nsets,
                                 (FcPattern*)p.get_ptr(),
                                 (FcObjectSet*)os.get_ptr() ) );
@@ -291,30 +270,61 @@ FontSet Config::fontSetList(FontSet* sets, int nsets, Pattern p, ObjectSet os)
     return returnMe;
 }
 
-FontSet Config::fontList(Pattern p, ObjectSet os)
+FontSet ConfigDelegate::fontList(Pattern p, ObjectSet os)
 {
     return FontSet(
-            FcFontList( (FcConfig*)m_ptr,
+            FcFontList( m_ptr,
                         (FcPattern*)p.get_ptr(),
                         (FcObjectSet*)os.get_ptr() ) );
 }
 
 
-bool Config::parseAndLoad(Config config, const Char8_t* file, bool complain)
+bool ConfigDelegate::parseAndLoad(const Char8_t* file, bool complain)
 {
     return FcConfigParseAndLoad(
-                (FcConfig*)config.get_ptr(),
+                m_ptr,
                 file, complain ? FcTrue : FcFalse );
 }
 
-bool Config::unlink(const Char8_t* dir)
+bool ConfigDelegate::unlink(const Char8_t* dir)
 {
-    return FcDirCacheUnlink(dir, (FcConfig*)m_ptr );
+    return FcDirCacheUnlink(dir, m_ptr );
 }
 
-void Config::createTagFile() const
+void ConfigDelegate::createTagFile() const
 {
     return FcCacheCreateTagFile((const FcConfig*)m_ptr);
+}
+
+
+
+Char8_t* Config::home(void)
+{
+    return FcConfigHome();
+}
+
+bool Config::enableHome(bool enable)
+{
+    return FcConfigEnableHome(enable ? FcTrue : FcFalse );
+}
+
+Char8_t* Config::filename(const Char8_t* url)
+{
+    return FcConfigFilename(url);
+}
+
+RefPtr<Config> Config::create()
+{
+    return RefPtr<Config>( FcConfigCreate() );
+}
+
+RefPtr<Config> Config::getCurrent()
+{
+    // note: FcConfigGetCurrent does not increase reference count of the
+    // returned pointer so we use FcConfigReference(0) which returns
+    // the current but increases the reference count, we could also
+    // do that part ourselves if we wnated to
+    return RefPtr<Config>( FcConfigReference(0) );
 }
 
 

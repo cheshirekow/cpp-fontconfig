@@ -37,14 +37,14 @@ namespace fontconfig
      *  Loads the default configuration file and returns the resulting
      *  configuration. Does not load any font information.
      */
-    Config initLoadConfig();
+    RefPtr<Config> initLoadConfig();
 
     /// load configuration and font data
     /**
      *  Loads the default configuration file and builds information about the
      *  available fonts. Returns the resulting configuration.
      */
-    Config initLoadConfigAndFonts();
+    RefPtr<Config> initLoadConfigAndFonts();
 
     /// initialize fontconfig library
     /**

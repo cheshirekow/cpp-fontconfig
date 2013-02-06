@@ -311,9 +311,9 @@ void Pattern::defaultSubstitute()
     return FcDefaultSubstitute( (FcPattern*)m_ptr );
 }
 
-bool Pattern::substitute(Config c, MatchKind_t kind)
+bool Pattern::substitute(RefPtr<Config> c, MatchKind_t kind)
 {
-    return c.substitute(*this,kind);
+    return c->substitute(*this,kind);
 }
 
 bool Pattern::substitute(MatchKind_t kind)
