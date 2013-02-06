@@ -27,7 +27,7 @@
 #ifndef CPPFONTCONFIG_FREETYPE_H_
 #define CPPFONTCONFIG_FREETYPE_H_
 
-#include <cppfontconfig/common.h>
+#include <cppfontconfig/cppfontconfig.h>
 
 namespace freetype
 {
@@ -56,7 +56,7 @@ Char32_t CharIndex(ft::RefPtr<ft::Face> face, Char32_t ucs4);
  *  'blanks' is not 0, the glyphs in the font are examined and any blank
  *  glyphs not in 'blanks' are not placed in the returned FcCharSet.
  */
-CharSet CharSet(ft::RefPtr<ft::Face> face, Blanks blanks);
+RefPtr<CharSet> CharSet(ft::RefPtr<ft::Face> face, RefPtr<Blanks> blanks);
 
 /// compute Unicode coverage and spacing type
 /**
@@ -69,21 +69,25 @@ CharSet CharSet(ft::RefPtr<ft::Face> face, Blanks blanks);
  *  in precisely two widths, one twice as wide as the other, or FC_PROPORTIONAL
  *  where the font has glyphs of many widths.
  */
-CharSet CharSetAndSpacing(ft::RefPtr<ft::Face>, Blanks blanks, int *spacing);
+RefPtr<CharSet> CharSetAndSpacing(ft::RefPtr<ft::Face>,
+                            RefPtr<Blanks> blanks, int *spacing);
 
 /// compute pattern from font file (and index)
 /**
  *  Constructs a pattern representing the 'id'th font in 'file'. The number of
  *  fonts in 'file' is returned in 'count'.
  */
-Pattern Query(const Char8_t *file, int id, Blanks blanks, int *count);
+Pattern Query(const Char8_t *file, int id,
+                    RefPtr<Blanks> blanks, int *count);
 
 /// compute pattern from FT_Face
 /**
  *  Constructs a pattern representing 'face'. 'file' and 'id' are used solely
  *  as data for pattern elements (FC_FILE, FC_INDEX and sometimes FC_FAMILY).
  */
-Pattern QueryFace(const freetype::Face& face, const Char8_t *file, int id, Blanks blanks);
+Pattern QueryFace(const ft::RefPtr<ft::Face>& face,
+                    const Char8_t *file, int id,
+                    RefPtr<Blanks> blanks);
 
 
 }

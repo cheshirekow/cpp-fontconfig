@@ -24,56 +24,55 @@
  *  \brief  
  */
 
-
-#include <cppfontconfig/freetype.h>
 #include <fontconfig/fontconfig.h>
 #include <fontconfig/fcfreetype.h>
+#include <cppfontconfig/freetype.h>
+#include <cppfreetype/cppfreetype.h>
+
 
 namespace fontconfig {
-namespace         ft {
 
 
-Char32_t CharIndex(freetype::Face face, Char32_t ucs4)
+Char32_t CharIndex(ft::RefPtr<ft::Face> face, Char32_t ucs4)
 {
-    return FcFreeTypeCharIndex( (FT_FACE) face.get_ptr(), ucs4 );
+    return FcFreeTypeCharIndex( face.subvert(), ucs4 );
 }
 
-CharSet CharSet(freetype::Face face, Blanks blanks)
+RefPtr<CharSet> CharSet(ft::RefPtr<ft::Face> face, RefPtr<Blanks> blanks)
 {
-    return FcFreeTypeCharSet(   (FT_FACE) face.get_ptr(),
-                                (FcBlanks*) blanks.get_ptr() );
+    return RefPtr<CharSet>(
+            FcFreeTypeCharSet(   face.subvert(),
+                                blanks.subvert() ) );
 }
 
-CharSet CharSetAndSpacing(freetype::Face face, Blanks blanks,
+RefPtr<CharSet> CharSetAndSpacing(ft::RefPtr<ft::Face> face, RefPtr<Blanks> blanks,
         int* spacing)
 {
-    return FcFreeTypeCharSetAndSpacing(
-                                (FT_FACE)face.get_ptr(),
-                                (Blanks*)blanks.get_ptr() );
+    return RefPtr<CharSet>(
+            FcFreeTypeCharSetAndSpacing(
+                                face.subvert(),
+                                blanks.subvert() ) );
 }
 
-Pattern Query(const Char8_t* file, int id, Blanks blanks,
+Pattern Query(const Char8_t* file, int id, RefPtr<Blanks> blanks,
         int* count)
 {
     return Pattern(
-            FcFreeTypeQuery(file, id, (FcBlanks*)blanks.get_ptr(), count ) );
+            FcFreeTypeQuery(file, id, blanks.subvert(), count ) );
 }
 
-Pattern QueryFace(const freetype::Face& face,
-        const Char8_t* file, int id, Blanks blanks)
+Pattern QueryFace(const ft::RefPtr<ft::Face>& face,
+        const Char8_t* file, int id, RefPtr<Blanks> blanks)
 {
     return Pattern(
             FcFreeTypeQueryFace(
-                    (FT_FACE)face.get_ptr(),
+                    face.subvert(),
                     id,
-                    (FcBlanks*)blanks.get_ptr() ) );
+                    blanks.subvert() ) );
 }
 
 
 
-
-
-}
 }
 
 
