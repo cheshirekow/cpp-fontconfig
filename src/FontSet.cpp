@@ -30,39 +30,25 @@
 namespace fontconfig
 {
 
-FontSet::FontSet(void* ptr):
-    m_ptr(ptr)
+
+void FontSetDelegate::destroy()
 {
+    FcFontSetDestroy( m_ptr );
 }
 
-void* FontSet::get_ptr()
+bool FontSetDelegate::add(Pattern font)
 {
-    return m_ptr;
+    return FcFontSetAdd( m_ptr, (FcPattern*)font.get_ptr() );
 }
 
-const void* FontSet::get_ptr() const
+void FontSetDelegate::print()
 {
-    return m_ptr;
+    FcFontSetPrint( m_ptr );
 }
 
-FontSet FontSet::create(void)
+RefPtr<FontSet> FontSet::create(void)
 {
-    return FontSet( FcFontSetCreate() );
-}
-
-void FontSet::destroy()
-{
-    FcFontSetDestroy( (FcFontSet*)m_ptr );
-}
-
-bool FontSet::add(Pattern font)
-{
-    return FcFontSetAdd( (FcFontSet*)m_ptr, (FcPattern*)font.get_ptr() );
-}
-
-void FontSet::print()
-{
-    FcFontSetPrint( (FcFontSet*)m_ptr );
+    return RefPtr<FontSet>( FcFontSetCreate() );
 }
 
 

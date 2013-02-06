@@ -191,7 +191,7 @@ class ConfigDelegate
          *  not be modified or freed. If config is NULL, the current
          *  configuration is used.
          */
-        FontSet getFonts (SetName_t set);
+        RefPtr<FontSet> getFonts (SetName_t set);
 
 
         /// Add font file to font database
@@ -276,7 +276,7 @@ class ConfigDelegate
          *  occurs during this process.
          */
         Pattern fontSetMatch(
-                    FontSet*    sets,
+                    RefPtr<FontSet>*    sets,
                     int         nsets,
                     Pattern     pattern,
                     Result_t&   result);
@@ -314,8 +314,8 @@ class ConfigDelegate
          *  The FcFontSet returned by FcFontSetSort is destroyed by calling
          *  FcFontSetDestroy.
          */
-        FontSet fontSetSort (
-                    FontSet*    sets,
+        RefPtr<FontSet> fontSetSort (
+                    RefPtr<FontSet>*    sets,
                     int         nsets,
                     Pattern     p,
                     bool        trim,
@@ -343,7 +343,7 @@ class ConfigDelegate
          *  FcFontSetDestroy. If config is NULL, the current configuration is
          *  used.
          */
-        FontSet fontSort (
+        RefPtr<FontSet> fontSort (
                     Pattern             p,
                     bool                trim,
                     RefPtr<CharSet>*    csp,
@@ -357,8 +357,8 @@ class ConfigDelegate
          *  the set of unique such patterns. If config is NULL, the default
          *  configuration is checked to be up to date, and used.
          */
-        FontSet fontSetList (
-                    FontSet*  sets,
+        RefPtr<FontSet> fontSetList (
+                    RefPtr<FontSet>*  sets,
                     int          nsets,
                     Pattern      p,
                     ObjectSet    os);
@@ -371,7 +371,7 @@ class ConfigDelegate
          *  such patterns. If config is NULL, the default configuration is
          *  checked to be up to date, and used.
          */
-        FontSet fontList (
+        RefPtr<FontSet> fontList (
                     Pattern     p,
                     ObjectSet   os);
 

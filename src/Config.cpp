@@ -115,9 +115,9 @@ bool ConfigDelegate::setRescanInterval(int rescanInterval)
     return FcConfigSetRescanInterval( m_ptr, rescanInterval );
 }
 
-FontSet ConfigDelegate::getFonts(SetName_t set)
+RefPtr<FontSet> ConfigDelegate::getFonts(SetName_t set)
 {
-    return FontSet( FcConfigGetFonts( m_ptr , (FcSetName) set ) );
+    return RefPtr<FontSet>( FcConfigGetFonts( m_ptr , (FcSetName)set ) );
 }
 
 bool ConfigDelegate::appFontAddFile(const Char8_t* file)
@@ -166,12 +166,14 @@ Pattern ConfigDelegate::fontMatch(Pattern p, Result_t& result)
     return returnMe;
 }
 
-Pattern ConfigDelegate::fontSetMatch(FontSet* sets, int nsets, Pattern pattern,
+Pattern ConfigDelegate::fontSetMatch(
+        RefPtr<FontSet>* sets, int nsets,
+        Pattern pattern,
         Result_t& result)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
     for(int i=0; i < nsets; i++)
-        ptrs[i] = (FcFontSet*)sets[i].get_ptr();
+        ptrs[i] = sets[i].subvert();
 
     FcResult result2;
 
@@ -198,8 +200,8 @@ Pattern ConfigDelegate::renderPrepare(Pattern pat, Pattern font)
     );
 }
 
-FontSet ConfigDelegate::fontSetSort(
-            FontSet* sets,
+RefPtr<FontSet> ConfigDelegate::fontSetSort(
+            RefPtr<FontSet>* sets,
             int nsets,
             Pattern p,
             bool trim,
@@ -208,12 +210,12 @@ FontSet ConfigDelegate::fontSetSort(
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
     for(int i=0; i < nsets; i++)
-        ptrs[i] = (FcFontSet*)sets[i].get_ptr();
+        ptrs[i] = sets[i].subvert();
 
     FcCharSet*  csp2;
     FcResult    result2;
 
-    FontSet returnMe(
+    RefPtr<FontSet> returnMe(
             FcFontSetSort(
                     m_ptr,
                     ptrs,
@@ -232,15 +234,17 @@ FontSet ConfigDelegate::fontSetSort(
     return returnMe;
 }
 
-FontSet ConfigDelegate::fontSort(Pattern p, bool trim,
-                            RefPtr<CharSet>* csp, Result_t& result)
+RefPtr<FontSet> ConfigDelegate::fontSort(
+        Pattern p, bool trim,
+        RefPtr<CharSet>* csp,
+        Result_t& result)
 {
     FcCharSet*  csp2;
     FcResult    result2;
 
     //FIXME: need to copy csp2 to csp, and add option to not return csp
 
-    FontSet returnMe(
+    RefPtr<FontSet> returnMe(
             FcFontSort( m_ptr,
                         (FcPattern*)p.get_ptr(),
                         trim ? FcTrue : FcFalse,
@@ -254,13 +258,15 @@ FontSet ConfigDelegate::fontSort(Pattern p, bool trim,
     return returnMe;
 }
 
-FontSet ConfigDelegate::fontSetList(FontSet* sets, int nsets, Pattern p, ObjectSet os)
+RefPtr<FontSet> ConfigDelegate::fontSetList(
+        RefPtr<FontSet>* sets, int nsets,
+        Pattern p, ObjectSet os)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
     for(int i=0; i < nsets; i++)
-        ptrs[i] = (FcFontSet*)sets[i].get_ptr();
+        ptrs[i] = sets[i].subvert();
 
-    FontSet returnMe(
+    RefPtr<FontSet> returnMe(
                 FcFontSetList( m_ptr,
                                 ptrs,nsets,
                                 (FcPattern*)p.get_ptr(),
@@ -270,9 +276,9 @@ FontSet ConfigDelegate::fontSetList(FontSet* sets, int nsets, Pattern p, ObjectS
     return returnMe;
 }
 
-FontSet ConfigDelegate::fontList(Pattern p, ObjectSet os)
+RefPtr<FontSet> ConfigDelegate::fontList(Pattern p, ObjectSet os)
 {
-    return FontSet(
+    return RefPtr<FontSet>(
             FcFontList( m_ptr,
                         (FcPattern*)p.get_ptr(),
                         (FcObjectSet*)os.get_ptr() ) );

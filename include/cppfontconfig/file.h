@@ -51,7 +51,7 @@ namespace fontconfig
  *  FcFalse if any of the fonts cannot be added (due to allocation failure).
  *  Otherwise returns FcTrue.
  */
-bool fileScan( FontSet set, StrSet dirs,
+bool fileScan( RefPtr<FontSet> set, StrSet dirs,
                 RefPtr<Blanks> blanks, const Char8_t* file, bool force );
 
 /// check whether a file is a directory
@@ -68,7 +68,7 @@ bool fileIsDir( const Char8_t* file);
  *  this function does not create any cache files. Use FcDirCacheRead() if
  *  caching is desired.
  */
-bool dirScan( FontSet set, StrSet dirs, RefPtr<Blanks> blanks,
+bool dirScan( RefPtr<FontSet> set, StrSet dirs, RefPtr<Blanks> blanks,
                 const Char8_t *dir, bool force);
 
 

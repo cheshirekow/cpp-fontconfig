@@ -33,6 +33,8 @@
 namespace fontconfig
 {
 
+class FontSet;
+
 /// An FcFontSet simply holds a list of patterns; these are used to return the
 /// results of listing available fonts.
 /**
@@ -42,35 +44,32 @@ namespace fontconfig
  *  patterns in the 'fonts' array; 'sfont' is used to indicate the size of
  *  that array.
  */
-class FontSet
+class FontSetDelegate
 {
     private:
-        void* m_ptr;
+        FcFontSet* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit FontSetDelegate(FcFontSet* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        FontSetDelegate( const FontSetDelegate& other );
+
+        /// not assignable
+        FontSetDelegate& operator=( const FontSetDelegate& other );
 
     public:
-        ///
-        /**
-         *
-         */
-        FontSet( void* ptr );
+        friend class RefPtr<FontSet>;
 
-        ///
-        /**
-         *
-         */
-        void* get_ptr();
+        FontSetDelegate* operator->(){ return this; }
+        const FontSetDelegate* operator->() const { return this; }
 
-        ///
-        /**
-         *
-         */
-        const void* get_ptr() const;
-
-        /// Create a font set
-        /**
-         *  Creates an empty font set.
-         */
-        FontSet create (void);
 
         /// Destroy a font set
         /**
@@ -91,8 +90,29 @@ class FontSet
         /// Print a set of patterns to stdout
         void print();
 
+};
 
 
+/// An FcFontSet simply holds a list of patterns; these are used to return the
+/// results of listing available fonts.
+/**
+ *  An FcFontSet contains a list of FcPatterns. Internally fontconfig uses
+ *  this data structure to hold sets of fonts. Externally, fontconfig returns
+ *  the results of listing fonts in this format. 'nfont' holds the number of
+ *  patterns in the 'fonts' array; 'sfont' is used to indicate the size of
+ *  that array.
+ */
+struct FontSet
+{
+    typedef FontSetDelegate Delegate;
+    typedef FcFontSet*      Storage;
+    typedef FcFontSet*      cobjptr;
+
+    /// Create a font set
+    /**
+     *  Creates an empty font set.
+     */
+    static RefPtr<FontSet> create (void);
 };
 
 } // namespace fontconfig 
