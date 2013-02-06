@@ -31,54 +31,90 @@
 namespace fontconfig
 {
 
-Pattern::Builder::Builder(Pattern pattern):
+
+
+template<>
+void RefPtr<Pattern>::reference()
+{
+    if(m_ptr)
+        FcPatternReference( m_ptr );
+}
+
+template<>
+void RefPtr<Pattern>::dereference()
+{
+    if(m_ptr)
+        FcPatternDestroy( m_ptr );
+}
+
+
+
+
+RefPtr<Pattern> Pattern::create(void)
+{
+    return RefPtr<Pattern>( FcPatternCreate() );
+}
+
+Pattern::Builder Pattern::buildNew( )
+{
+    RefPtr<Pattern> result = Pattern::create();
+    return result->build();
+}
+
+RefPtr<Pattern> Pattern::parse(const Char8_t* name)
+{
+    return RefPtr<Pattern>( FcNameParse( name ) );
+}
+
+
+Pattern::Builder::Builder(RefPtr<Pattern> pattern):
     m_pattern(pattern)
 {
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, int i)
 {
-    m_pattern.add(obj,i);
+    m_pattern->add(obj,i);
     return *this;
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, double d)
 {
-    m_pattern.add(obj,d);
+    m_pattern->add(obj,d);
     return *this;
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, Char8_t* s)
 {
-    m_pattern.add(obj,s);
+    m_pattern->add(obj,s);
     return *this;
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const Matrix& m)
 {
-    m_pattern.add(obj,m);
+    m_pattern->add(obj,m);
     return *this;
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const RefPtr<CharSet>& cs)
 {
-    m_pattern.add(obj,cs);
+    m_pattern->add(obj,cs);
     return *this;
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, bool b)
 {
-    m_pattern.add(obj,b);
+    m_pattern->add(obj,b);
     return *this;
 }
 
 Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const RefPtr<LangSet>& ls)
 {
-    m_pattern.add(obj,ls);
+    m_pattern->add(obj,ls);
     return *this;
 }
 
-Pattern Pattern::Builder::done()
+RefPtr<Pattern> Pattern::Builder::done()
 {
     return m_pattern;
 }
@@ -86,166 +122,125 @@ Pattern Pattern::Builder::done()
 
 
 
-Pattern::Pattern(void* ptr):
-    m_ptr(ptr)
+RefPtr<Pattern> PatternDelegate::duplicate()
 {
-
+    return RefPtr<Pattern>( FcPatternDuplicate( m_ptr ) );
 }
 
-Pattern::Pattern(const Pattern& other)
+RefPtr<Pattern> PatternDelegate::filter(const RefPtr<ObjectSet> os)
 {
-    m_ptr = other.m_ptr;
-    FcPatternReference( (FcPattern*)other.m_ptr);
-}
-
-Pattern::~Pattern()
-{
-    FcPatternDestroy( (FcPattern*)m_ptr );
-}
-
-void* Pattern::get_ptr()
-{
-    return m_ptr;
-}
-
-const void* Pattern::get_ptr() const
-{
-    return m_ptr;
-}
-
-Pattern& Pattern::operator=( const Pattern& other )
-{
-    FcPatternDestroy( (FcPattern*)m_ptr );
-    m_ptr = other.m_ptr;
-    FcPatternReference( (FcPattern*)other.m_ptr);
-
-    return *this;
-}
-
-Pattern Pattern::create(void)
-{
-    return Pattern( FcPatternCreate() );
-}
-
-Pattern Pattern::duplicate()
-{
-    return Pattern( FcPatternDuplicate( (FcPattern*)m_ptr ) );
-}
-
-Pattern Pattern::filter(const RefPtr<ObjectSet> os)
-{
-    return Pattern(
-            FcPatternFilter( (FcPattern*)m_ptr,
+    return RefPtr<Pattern>(
+            FcPatternFilter( m_ptr,
                              os.subvert() ) );
 }
 
-bool Pattern::equal(const Pattern& pb)
+bool PatternDelegate::equal(const RefPtr<Pattern> pb)
 {
-    return FcPatternEqual( (FcPattern*)m_ptr,
-                            (const FcPattern*) pb.m_ptr );
+    return FcPatternEqual( m_ptr, pb.subvert() );
 }
 
-bool Pattern::equalSubset(const Pattern& pb, const RefPtr<ObjectSet> os)
+bool PatternDelegate::equalSubset(
+        const RefPtr<Pattern> pb, const RefPtr<ObjectSet> os)
 {
     return FcPatternEqualSubset(
-                (FcPattern*)m_ptr,
-                (const FcPattern*) pb.m_ptr,
+                m_ptr,
+                pb.subvert(),
                 os.subvert() );
 
 }
 
-Char32_t Pattern::hash()
+Char32_t PatternDelegate::hash()
 {
-    return FcPatternHash( (FcPattern*)m_ptr );
+    return FcPatternHash( m_ptr );
 }
 
-bool Pattern::del(const char* object)
+bool PatternDelegate::del(const char* object)
 {
-    return FcPatternDel( (FcPattern*)m_ptr, object );
+    return FcPatternDel( m_ptr, object );
 }
 
-bool Pattern::remove(const char* object, int id)
+bool PatternDelegate::remove(const char* object, int id)
 {
-    return FcPatternRemove( (FcPattern*)m_ptr, object, id );
+    return FcPatternRemove( m_ptr, object, id );
 }
 
-bool Pattern::add(const char* obj, int i)
+bool PatternDelegate::add(const char* obj, int i)
 {
-    return FcPatternAddInteger( (FcPattern*)m_ptr, obj, i );
+    return FcPatternAddInteger( m_ptr, obj, i );
 }
 
-bool Pattern::add(const char* obj, double d)
+bool PatternDelegate::add(const char* obj, double d)
 {
-    return FcPatternAddDouble( (FcPattern*)m_ptr, obj, d );
+    return FcPatternAddDouble( m_ptr, obj, d );
 }
 
-bool Pattern::add(const char* obj, const Char8_t* s)
+bool PatternDelegate::add(const char* obj, const Char8_t* s)
 {
-    return FcPatternAddString( (FcPattern*)m_ptr, obj, s );
+    return FcPatternAddString( m_ptr, obj, s );
 }
 
-bool Pattern::add(const char* obj, const Matrix& m)
+bool PatternDelegate::add(const char* obj, const Matrix& m)
 {
-    return FcPatternAddMatrix( (FcPattern*)m_ptr,
+    return FcPatternAddMatrix( m_ptr,
                                 obj,
                                 &m );
 }
 
-bool Pattern::add(const char* obj, const RefPtr<CharSet>& c)
+bool PatternDelegate::add(const char* obj, const RefPtr<CharSet> c)
 {
-    return FcPatternAddCharSet( (FcPattern*)m_ptr,
+    return FcPatternAddCharSet( m_ptr,
                                 obj,
                                 c.subvert() );
 }
 
-bool Pattern::add(const char* obj, bool b)
+bool PatternDelegate::add(const char* obj, bool b)
 {
-    return FcPatternAddBool( (FcPattern*)m_ptr,
+    return FcPatternAddBool( m_ptr,
                                 obj,
                                 b ? FcTrue : FcFalse );
 }
 
-bool Pattern::add(const char* obj, const RefPtr<LangSet> ls)
+bool PatternDelegate::add(const char* obj, const RefPtr<LangSet> ls)
 {
-    return FcPatternAddLangSet( (FcPattern*)m_ptr,
+    return FcPatternAddLangSet( m_ptr,
                                 obj,
                                 ls.subvert() );
 }
 
-Result_t Pattern::get(const char* obj, int n, int& i)
+Result_t PatternDelegate::get(const char* obj, int n, int& i)
 {
-    return (Result_t)FcPatternGetInteger( (FcPattern*)m_ptr, obj, n, &i );
+    return (Result_t)FcPatternGetInteger( m_ptr, obj, n, &i );
 }
 
-Result_t Pattern::get(const char* obj, int n, double& d)
+Result_t PatternDelegate::get(const char* obj, int n, double& d)
 {
-    return (Result_t)FcPatternGetDouble( (FcPattern*)m_ptr, obj, n, &d );
+    return (Result_t)FcPatternGetDouble( m_ptr, obj, n, &d );
 }
 
-Result_t Pattern::get(const char* obj, int n, Char8_t*& s)
+Result_t PatternDelegate::get(const char* obj, int n, Char8_t*& s)
 {
-    return (Result_t)FcPatternGetString( (FcPattern*)m_ptr, obj, n, &s );
+    return (Result_t)FcPatternGetString( m_ptr, obj, n, &s );
 }
 
 
 // FIXME: Figure out what to do about matrices... if we do what we're doing now,
 // the got matrix is not modifiable, or rather, if modified the matrix stored
 // in the pattern wont get those changes
-Result_t Pattern::get(const char* obj, int n, Matrix*& m)
+Result_t PatternDelegate::get(const char* obj, int n, Matrix*& m)
 {
     FcMatrix* mm;
     Result_t result =
-            (Result_t)FcPatternGetMatrix( (FcPattern*)m_ptr, obj, n, &mm );
+            (Result_t)FcPatternGetMatrix( m_ptr, obj, n, &mm );
     m = static_cast<Matrix*>(mm);
 
     return result;
 }
 
-Result_t Pattern::get(const char* obj, int n, RefPtr<CharSet>& c)
+Result_t PatternDelegate::get(const char* obj, int n, RefPtr<CharSet>& c)
 {
     FcCharSet* cc;
     Result_t result =
-            (Result_t)FcPatternGetCharSet( (FcPattern*)m_ptr, obj, n, &cc );
+            (Result_t)FcPatternGetCharSet( m_ptr, obj, n, &cc );
 
     // char sets are reference counted so we need to increment the reference
     // since we're taking a pointer to it
@@ -254,73 +249,67 @@ Result_t Pattern::get(const char* obj, int n, RefPtr<CharSet>& c)
     return result;
 }
 
-Result_t Pattern::get(const char* obj, int n, bool& b)
+Result_t PatternDelegate::get(const char* obj, int n, bool& b)
 {
     FcBool bb;
     Result_t result =
-            (Result_t)FcPatternGetBool( (FcPattern*)m_ptr, obj, n, &bb );
+            (Result_t)FcPatternGetBool( m_ptr, obj, n, &bb );
     b = bb != 0;
     return result;
 }
 
-Result_t Pattern::get(const char* obj, int n, RefPtr<LangSet>& ls)
+Result_t PatternDelegate::get(const char* obj, int n, RefPtr<LangSet>& ls)
 {
     FcLangSet* lss;
     Result_t result =
-            (Result_t)FcPatternGetLangSet( (FcPattern*)m_ptr, obj, n, &lss );
+            (Result_t)FcPatternGetLangSet( m_ptr, obj, n, &lss );
 
     ls = lss;
     return result;
 }
 
-Pattern::Builder Pattern::build( )
+Pattern::Builder PatternDelegate::build( )
 {
-    return Builder(this);
+    return Pattern::Builder(RefPtr<Pattern>(m_ptr));
 }
 
-Pattern::Builder Pattern::buildNew( )
+
+Char8_t* PatternDelegate::unparse()
 {
-    Pattern result = Pattern::create();
-    return result.build();
+    return FcNameUnparse( m_ptr );
 }
 
-Pattern Pattern::parse(const Char8_t* name)
+Char8_t* PatternDelegate::format(const Char8_t* format)
 {
-    return Pattern( FcNameParse( name ) );
+    return FcPatternFormat( m_ptr, format );
 }
 
-Char8_t* Pattern::unparse()
+void PatternDelegate::print()
 {
-    return FcNameUnparse( (FcPattern*)m_ptr );
+    return FcPatternPrint( m_ptr );
 }
 
-Char8_t* Pattern::format(const Char8_t* format)
+void PatternDelegate::defaultSubstitute()
 {
-    return FcPatternFormat( (FcPattern*)m_ptr, format );
+    return FcDefaultSubstitute( m_ptr );
 }
 
-void Pattern::print()
+bool PatternDelegate::substitute(RefPtr<Config> c, MatchKind_t kind)
 {
-    return FcPatternPrint( (FcPattern*)m_ptr );
+    return c->substitute(RefPtr<Pattern>(m_ptr),kind);
 }
 
-void Pattern::defaultSubstitute()
-{
-    return FcDefaultSubstitute( (FcPattern*)m_ptr );
-}
-
-bool Pattern::substitute(RefPtr<Config> c, MatchKind_t kind)
-{
-    return c->substitute(*this,kind);
-}
-
-bool Pattern::substitute(MatchKind_t kind)
+bool PatternDelegate::substitute(MatchKind_t kind)
 {
     return FcConfigSubstitute(
                 (FcConfig*)0,
-                (FcPattern*)m_ptr,
+                m_ptr,
                 (FcMatchKind)kind );
 }
+
+
+
+
 
 }
 

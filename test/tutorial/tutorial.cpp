@@ -48,7 +48,7 @@ int main( int argc, char** argv )
     // fontconfig free's on fc::fini
     {
         // create a pattern to search for
-        fc::Pattern pat = fc::Pattern::create();
+        fc::RefPtr<fc::Pattern> pat = fc::Pattern::create();
 
         // type safe version, but will not give compiler error if the
         // argument is the wrong type for the key
@@ -57,18 +57,18 @@ int main( int argc, char** argv )
         // type safe but inextensible version that works only on built in
         // types, will give a compiler error if the parameter is not the
         // right type for the key
-        pat.addBuiltIn<fc::key::FAMILY>( (const fc::Char8_t*)argv[1] );
+        pat->addBuiltIn<fc::key::FAMILY>( (const fc::Char8_t*)argv[1] );
 
         // get a pointer to the default configuration
         fc::RefPtr<fc::Config> config = fc::Config::getCurrent();
 
         // perform substitutions
-        pat.substitute(fc::match::Pattern);
-        pat.defaultSubstitute();
+        pat->substitute(fc::match::Pattern);
+        pat->defaultSubstitute();
 
         // get the match
         fc::Result_t result;
-        fc::Pattern match = config->fontMatch(pat, result);
+        fc::RefPtr<fc::Pattern> match = config->fontMatch(pat, result);
 
         // get the closest matching font file
         fc::Char8_t*    file;
@@ -76,8 +76,8 @@ int main( int argc, char** argv )
 
         // we should have a better get/add interface... this isn't very
         // c++-y
-        match.get( fc::FILE, 0, file);
-        match.get( fc::INDEX, 0, index);
+        match->get( fc::FILE, 0, file);
+        match->get( fc::INDEX, 0, index);
 
         // at this point, we probably want to use freetype to get a face
         // that we can use in our application, but since this is just a

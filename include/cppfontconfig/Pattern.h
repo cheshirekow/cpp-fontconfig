@@ -27,7 +27,9 @@
 #ifndef CPPFONTCONFIG_PATTERN_H_
 #define CPPFONTCONFIG_PATTERN_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/CharSet.h>
 #include <cppfontconfig/LangSet.h>
 #include <cppfontconfig/Matrix.h>
@@ -37,8 +39,82 @@
 namespace fontconfig
 {
 
-
 class Config;
+class PatternDelegate;
+
+/// traits class for FcPattern
+/// holds a set of names with associated value lists;
+/**
+ *  each name refers to a property of a font. FcPatterns are used as inputs to
+ *  the matching code as well as holding information about specific fonts.
+ *  Each property can hold one or more values; conventionally all of the same
+ *  type, although the interface doesn't demand that.
+ */
+struct Pattern
+{
+    typedef PatternDelegate Delegate;
+    typedef FcPattern*      Storage;
+    typedef FcPattern*      cobjptr;
+
+    class Builder;
+
+    /// Create a pattern
+    /**
+     *  Creates a pattern with no properties; used to build patterns from
+     *  scratch.
+     */
+    static RefPtr<Pattern> create(void);
+
+    /// Builds a pattern using a list of objects, types and values.
+    /**
+     *  Each value to be entered in the pattern is specified with three
+     *  arguments:
+     *    * Object name, a string describing the property to be added.
+     *    * Object type, one of the FcType enumerated values
+     *    * Value, not an FcValue, but the raw type as passed to any of the
+     *      FcPatternAdd<type> functions. Must match the type of the second
+     *      argument.
+     *
+     *  The argument list is terminated by a null object name, no object
+     *  type nor value need be passed for this. The values are added to
+     *  `pattern', if `pattern' is null, a new pattern is created.
+     *  In either case, the pattern is returned. Example
+     *
+     *  \code{.cpp}
+     *  Pattern pattern = Pattern::buildNew (FC_FAMILY, FcTypeString, "Times", (char *) 0);
+     *  \endcode
+     */
+    static Builder buildNew( );
+
+    /// Parse a pattern string
+    /**
+     *  Converts name from the standard text format described above into a
+     *  pattern.
+     */
+    static RefPtr<Pattern> parse( const Char8_t* name );
+};
+
+
+
+/// utility for building patterns using interface similar to
+/// variable argument list
+class Pattern::Builder
+{
+    private:
+        RefPtr<Pattern> m_pattern;
+
+    public:
+        Builder( RefPtr<Pattern> pattern );
+        Builder& operator()( const char* obj, int               i);
+        Builder& operator()( const char* obj, double            d);
+        Builder& operator()( const char* obj, Char8_t*          s);
+        Builder& operator()( const char* obj, const Matrix&     m);
+        Builder& operator()( const char* obj, const RefPtr<CharSet>&   cs);
+        Builder& operator()( const char* obj, bool              b);
+        Builder& operator()( const char* obj, const RefPtr<LangSet>&   ls);
+
+        RefPtr<Pattern>  done();
+};
 
 
 /// holds a set of names with associated value lists;
@@ -48,74 +124,58 @@ class Config;
  *  Each property can hold one or more values; conventionally all of the same
  *  type, although the interface doesn't demand that.
  */
-class Pattern
+class PatternDelegate
 {
-    public:
-        class Builder;
-
     private:
-        void* m_ptr;
+        FcPattern* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit PatternDelegate(FcPattern* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        PatternDelegate( const PatternDelegate& other );
+
+        /// not assignable
+        PatternDelegate& operator=( const PatternDelegate& other );
 
     public:
-        /// wrap constructor, takes ownership of ptr and will call
-        /// FcPatternDestroy in the destructor
-        Pattern(void* ptr);
+        friend class RefPtr<Pattern>;
 
-        /// Copy constructor, calls FcPatternReference to increment
-        /// reference count
-        /**
-         *  Add another reference to p. Patterns are freed only when the
-         *  reference count reaches zero.
-         */
-        Pattern( const Pattern& other );
-
-        /// Calls FcPatternDestroy to decrement the reference count
-        /**
-         *  Decrement the pattern reference count. If all references are gone,
-         *  destroys the pattern, in the process destroying all related values.
-         */
-        ~Pattern();
-
-        void* get_ptr();
-        const void* get_ptr() const;
-
-        /// assignment operator reassigns this pattern pointer dropping
-        /// the reference to the old one and adding a reference to the new one
-        Pattern& operator=( const Pattern& other );
-
-        /// Create a pattern
-        /**
-         *  Creates a pattern with no properties; used to build patterns from
-         *  scratch.
-         */
-        static Pattern create(void);
+        PatternDelegate* operator->(){ return this; }
+        const PatternDelegate* operator->() const { return this; }
 
         /// Copy a pattern
         /**
          *  Copy a pattern, returning a new pattern that matches p. Each
          *  pattern may be modified without affecting the other.
          */
-        Pattern duplicate();
+        RefPtr<Pattern> duplicate();
 
         /// Filter the objects of pattern
         /**
          *  Returns a new pattern that only has those objects from p that are
          *  in os. If os is NULL, a duplicate of p is returned.
          */
-        Pattern filter(const RefPtr<ObjectSet> os);
+        RefPtr<Pattern> filter(const RefPtr<ObjectSet> os);
 
         /// Compare patterns
         /**
          *  Returns whether pa and pb are exactly alike.
          */
-        bool equal (const Pattern& pb);
+        bool equal (const RefPtr<Pattern> pb);
 
         /// Compare portions of patterns
         /**
          *  Returns whether pa and pb have exactly the same values for all of
          *  the objects in os.
          */
-        bool equalSubset (const Pattern& pb, const RefPtr<ObjectSet> os);
+        bool equalSubset (const RefPtr<Pattern> pb, const RefPtr<ObjectSet> os);
 
         /// Computer a pattern hash value
         /**
@@ -192,7 +252,7 @@ class Pattern
          *  FcPatternAdd as they will provide compile-time typechecking. These
          *  all append values to any existing list of values.
          */
-        bool add( const char* obj, const RefPtr<CharSet>& c );
+        bool add( const char* obj, const RefPtr<CharSet> c );
 
         /// Add a boolean object
         /**
@@ -314,35 +374,7 @@ class Pattern
          *  pattern.build(FC_FAMILY, FcTypeString, "Times", (char *) 0);
          *  \endcode
          */
-        Builder build( );
-
-        /// Builds a pattern using a list of objects, types and values.
-        /**
-         *  Each value to be entered in the pattern is specified with three
-         *  arguments:
-         *    * Object name, a string describing the property to be added.
-         *    * Object type, one of the FcType enumerated values
-         *    * Value, not an FcValue, but the raw type as passed to any of the
-         *      FcPatternAdd<type> functions. Must match the type of the second
-         *      argument.
-         *
-         *  The argument list is terminated by a null object name, no object
-         *  type nor value need be passed for this. The values are added to
-         *  `pattern', if `pattern' is null, a new pattern is created.
-         *  In either case, the pattern is returned. Example
-         *
-         *  \code{.cpp}
-         *  Pattern pattern = Pattern::buildNew (FC_FAMILY, FcTypeString, "Times", (char *) 0);
-         *  \endcode
-         */
-        static Builder buildNew( );
-
-        /// Parse a pattern string
-        /**
-         *  Converts name from the standard text format described above into a
-         *  pattern.
-         */
-        static Pattern parse( const Char8_t* name );
+        Pattern::Builder build( );
 
         /// Convert a pattern back into a string that can be parsed
         /**
@@ -574,25 +606,9 @@ class Pattern
 };
 
 
-/// utility for building patterns using interface similar to
-/// variable argument list
-class Pattern::Builder
-{
-    private:
-        Pattern m_pattern;
 
-    public:
-        Builder( Pattern pattern );
-        Builder& operator()( const char* obj, int               i);
-        Builder& operator()( const char* obj, double            d);
-        Builder& operator()( const char* obj, Char8_t*          s);
-        Builder& operator()( const char* obj, const Matrix&     m);
-        Builder& operator()( const char* obj, const RefPtr<CharSet>&   cs);
-        Builder& operator()( const char* obj, bool              b);
-        Builder& operator()( const char* obj, const RefPtr<LangSet>&   ls);
 
-        Pattern  done();
-};
+
 
 } // namespace fontconfig 
 

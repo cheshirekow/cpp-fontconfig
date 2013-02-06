@@ -234,8 +234,8 @@ class ConfigDelegate
          *  If config is NULL, the current configuration is used.
          */
         bool substituteWithPat (
-                       Pattern      p,
-                       Pattern      p_pat,
+                       RefPtr<Pattern> p,
+                       RefPtr<Pattern> p_pat,
                        MatchKind_t  kind);
 
 
@@ -247,8 +247,8 @@ class ConfigDelegate
          *  configuration is used.
          */
         bool substitute (
-                    Pattern     p,
-                    MatchKind_t kind);
+                    RefPtr<Pattern> p,
+                    MatchKind_t     kind);
 
 
         /// Return best font
@@ -260,8 +260,8 @@ class ConfigDelegate
          *  otherwise the results will not be correct. If config is NULL, the
          *  current configuration is used.
          */
-        Pattern fontMatch (
-                    Pattern     p,
+        RefPtr<Pattern> fontMatch (
+                    RefPtr<Pattern> p,
                     Result_t&   result);
 
 
@@ -275,10 +275,10 @@ class ConfigDelegate
          *  NULL, the current configuration is used. Returns NULL if an error
          *  occurs during this process.
          */
-        Pattern fontSetMatch(
+        RefPtr<Pattern> fontSetMatch(
                     RefPtr<FontSet>*    sets,
                     int         nsets,
-                    Pattern     pattern,
+                    RefPtr<Pattern> pattern,
                     Result_t&   result);
 
 
@@ -290,9 +290,9 @@ class ConfigDelegate
          *  is passed to FcConfigSubstituteWithPat with kind FcMatchFont and
          *  then returned.
          */
-        Pattern renderPrepare (
-                    Pattern     pat,
-                    Pattern     font);
+        RefPtr<Pattern> renderPrepare (
+                    RefPtr<Pattern> pat,
+                    RefPtr<Pattern> font);
 
 
         ///  Return list of matching fonts
@@ -317,7 +317,7 @@ class ConfigDelegate
         RefPtr<FontSet> fontSetSort (
                     RefPtr<FontSet>*    sets,
                     int         nsets,
-                    Pattern     p,
+                    RefPtr<Pattern> p,
                     bool        trim,
                     RefPtr<CharSet>* csp,
                     Result_t&        result);
@@ -344,7 +344,7 @@ class ConfigDelegate
          *  used.
          */
         RefPtr<FontSet> fontSort (
-                    Pattern             p,
+                    RefPtr<Pattern> p,
                     bool                trim,
                     RefPtr<CharSet>*    csp,
                     Result_t&           result);
@@ -360,7 +360,7 @@ class ConfigDelegate
         RefPtr<FontSet> fontSetList (
                     RefPtr<FontSet>*  sets,
                     int          nsets,
-                    Pattern      p,
+                    RefPtr<Pattern> p,
                     RefPtr<ObjectSet>    os);
 
 
@@ -372,7 +372,7 @@ class ConfigDelegate
          *  checked to be up to date, and used.
          */
         RefPtr<FontSet> fontList (
-                    Pattern     p,
+                    RefPtr<Pattern> p,
                     RefPtr<ObjectSet>   os);
 
 

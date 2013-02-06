@@ -135,40 +135,41 @@ void ConfigDelegate::appFontClear()
     return FcConfigAppFontClear( m_ptr );
 }
 
-bool ConfigDelegate::substituteWithPat(Pattern p, Pattern p_pat, MatchKind_t kind)
+bool ConfigDelegate::substituteWithPat(
+        RefPtr<Pattern> p, RefPtr<Pattern> p_pat, MatchKind_t kind)
 {
     return FcConfigSubstituteWithPat(
                 m_ptr ,
-                (FcPattern*)p.get_ptr(),
-                (FcPattern*)p_pat.get_ptr(),
+                p.subvert(),
+                p_pat.subvert(),
                 (FcMatchKind)kind );
 }
 
-bool ConfigDelegate::substitute(Pattern p, MatchKind_t kind)
+bool ConfigDelegate::substitute(RefPtr<Pattern> p, MatchKind_t kind)
 {
     return FcConfigSubstitute(
                 m_ptr,
-                (FcPattern*)p.get_ptr(),
+                p.subvert(),
                 (FcMatchKind)kind );
 }
 
-Pattern ConfigDelegate::fontMatch(Pattern p, Result_t& result)
+RefPtr<Pattern> ConfigDelegate::fontMatch(
+                    RefPtr<Pattern> p, Result_t& result)
 {
     FcResult result2;
-    Pattern returnMe = Pattern(
+    RefPtr<Pattern> returnMe =
             FcFontMatch( m_ptr,
-                         (FcPattern*)p.get_ptr(),
-                         &result2)
-        );
+                         p.subvert(),
+                         &result2 );
 
     result = (Result_t)result2;
 
     return returnMe;
 }
 
-Pattern ConfigDelegate::fontSetMatch(
+RefPtr<Pattern> ConfigDelegate::fontSetMatch(
         RefPtr<FontSet>* sets, int nsets,
-        Pattern pattern,
+        RefPtr<Pattern> pattern,
         Result_t& result)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
@@ -177,13 +178,13 @@ Pattern ConfigDelegate::fontSetMatch(
 
     FcResult result2;
 
-    Pattern returnMe(
+    RefPtr<Pattern> returnMe =
             FcFontSetMatch(
                     m_ptr,
                     ptrs,
                     nsets,
-                    (FcPattern*)pattern.get_ptr(),
-                    &result2) );
+                    pattern.subvert(),
+                    &result2 );
 
     delete [] ptrs;
 
@@ -191,19 +192,20 @@ Pattern ConfigDelegate::fontSetMatch(
     return returnMe;
 }
 
-Pattern ConfigDelegate::renderPrepare(Pattern pat, Pattern font)
+RefPtr<Pattern> ConfigDelegate::renderPrepare(
+            RefPtr<Pattern> pat, RefPtr<Pattern> font)
 {
-    return Pattern(
+    return RefPtr<Pattern>(
         FcFontRenderPrepare( m_ptr,
-                             (FcPattern*)pat.get_ptr(),
-                             (FcPattern*)font.get_ptr() )
+                              pat.subvert(),
+                              font.subvert() )
     );
 }
 
 RefPtr<FontSet> ConfigDelegate::fontSetSort(
             RefPtr<FontSet>* sets,
             int nsets,
-            Pattern p,
+            RefPtr<Pattern> p,
             bool trim,
             RefPtr<CharSet>* csp,
             Result_t& result)
@@ -215,15 +217,15 @@ RefPtr<FontSet> ConfigDelegate::fontSetSort(
     FcCharSet*  csp2;
     FcResult    result2;
 
-    RefPtr<FontSet> returnMe(
+    RefPtr<FontSet> returnMe =
             FcFontSetSort(
                     m_ptr,
                     ptrs,
                     nsets,
-                    (FcPattern*)p.get_ptr(),
+                    p.subvert(),
                     trim ? FcTrue : FcFalse,
                     csp ? &csp2 : (FcCharSet**)0,
-                    &result2) );
+                    &result2 );
 
     delete [] ptrs;
 
@@ -235,7 +237,7 @@ RefPtr<FontSet> ConfigDelegate::fontSetSort(
 }
 
 RefPtr<FontSet> ConfigDelegate::fontSort(
-        Pattern p, bool trim,
+        RefPtr<Pattern> p, bool trim,
         RefPtr<CharSet>* csp,
         Result_t& result)
 {
@@ -244,12 +246,12 @@ RefPtr<FontSet> ConfigDelegate::fontSort(
 
     //FIXME: need to copy csp2 to csp, and add option to not return csp
 
-    RefPtr<FontSet> returnMe(
+    RefPtr<FontSet> returnMe =
             FcFontSort( m_ptr,
-                        (FcPattern*)p.get_ptr(),
+                        p.subvert(),
                         trim ? FcTrue : FcFalse,
                         csp ? &csp2 : (FcCharSet**)0,
-                        &result2 ) );
+                        &result2 );
 
     if(csp)
         *csp = csp2;
@@ -259,28 +261,31 @@ RefPtr<FontSet> ConfigDelegate::fontSort(
 }
 
 RefPtr<FontSet> ConfigDelegate::fontSetList(
-        RefPtr<FontSet>* sets, int nsets,
-        Pattern p, RefPtr<ObjectSet> os)
+        RefPtr<FontSet>* sets,
+        int nsets,
+        RefPtr<Pattern> p,
+        RefPtr<ObjectSet> os)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
     for(int i=0; i < nsets; i++)
         ptrs[i] = sets[i].subvert();
 
-    RefPtr<FontSet> returnMe(
+    RefPtr<FontSet> returnMe =
                 FcFontSetList( m_ptr,
                                 ptrs,nsets,
-                                (FcPattern*)p.get_ptr(),
-                                os.subvert() ) );
+                                p.subvert(),
+                                os.subvert() );
     delete [] ptrs;
 
     return returnMe;
 }
 
-RefPtr<FontSet> ConfigDelegate::fontList(Pattern p, RefPtr<ObjectSet> os)
+RefPtr<FontSet> ConfigDelegate::fontList(
+        RefPtr<Pattern> p, RefPtr<ObjectSet> os)
 {
     return RefPtr<FontSet>(
             FcFontList( m_ptr,
-                        (FcPattern*)p.get_ptr(),
+                        p.subvert(),
                         os.subvert() ) );
 }
 

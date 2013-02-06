@@ -85,7 +85,7 @@ class FontSetDelegate
          *  cannot be inserted into the set (due to allocation failure).
          *  Otherwise returns FcTrue.
          */
-        bool add(Pattern font);
+        bool add(RefPtr<Pattern> font);
 
         /// Print a set of patterns to stdout
         void print();

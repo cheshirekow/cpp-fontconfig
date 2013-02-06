@@ -36,9 +36,9 @@ void FontSetDelegate::destroy()
     FcFontSetDestroy( m_ptr );
 }
 
-bool FontSetDelegate::add(Pattern font)
+bool FontSetDelegate::add(RefPtr<Pattern> font)
 {
-    return FcFontSetAdd( m_ptr, (FcPattern*)font.get_ptr() );
+    return FcFontSetAdd( m_ptr, font.subvert() );
 }
 
 void FontSetDelegate::print()

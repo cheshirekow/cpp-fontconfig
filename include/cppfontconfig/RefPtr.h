@@ -68,7 +68,7 @@ class RefPtr
          *  @note since fontconfig sometimes gives us a pointer which already has
          *        a reference count of 1, @p reference defaults to false.
          */
-        explicit RefPtr( cobjptr ptr=0, bool doRef=false ):
+        RefPtr( cobjptr ptr=0, bool doRef=false ):
             m_ptr(ptr)
         {
             if(doRef)
@@ -122,7 +122,7 @@ class RefPtr
 
         /// assignment operator, decreases reference count of current object,
         /// increases reference count of copied pointer
-        RefPtr<Traits>& operator=( const cobjptr& ptr )
+        RefPtr<Traits>& operator=( cobjptr ptr )
         {
             dereference();
             m_ptr = ptr;
