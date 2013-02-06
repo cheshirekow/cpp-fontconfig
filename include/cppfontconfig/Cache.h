@@ -28,6 +28,7 @@
 #define CPPFONTCONFIG_CACHE_H_
 
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/Config.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -36,6 +37,7 @@
 namespace fontconfig
 {
 
+class Cache;
 
 /// Holds information about the fonts contained in a single directory.
 /**
@@ -47,15 +49,31 @@ namespace fontconfig
  *
  *  @see FcCache
  */
-class Cache
+class CacheDelegate
 {
     private:
-        void* m_ptr;
+        FcCache* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit CacheDelegate(FcCache* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        CacheDelegate( const CacheDelegate& other );
+
+        /// not assignable
+        CacheDelegate& operator=( const CacheDelegate& other );
 
     public:
-        Cache( void* ptr );
-        void* get_ptr();
-        const void* get_ptr() const;
+        friend class RefPtr<Cache>;
+
+        CacheDelegate* operator->(){ return this; }
+        const CacheDelegate* operator->() const { return this; }
 
 
         /// Return directory of cache
@@ -94,47 +112,6 @@ class Cache
          */
         int numFont ();
 
-        ///  This tries to clean up the cache directory of cache_dir. This
-        /// returns FcTrue if the operation is successfully complete.
-        /// otherwise FcFalse.
-        static bool dirClean (const Char8_t *cache_dir, bool verbose);
-
-        /// checks directory cache
-        /**
-         *  Returns FcTrue if dir has an associated valid cache file, else
-         *  returns FcFalse
-         */
-        bool dirValid( const Char8_t* dir );
-
-        /// load a directory cache
-        /**
-         *  Loads the cache related to dir. If no cache file exists,
-         *  returns NULL. The name of the cache file is returned in cache_file,
-         *  unless that is NULL. See also FcDirCacheRead.
-         */
-        static Cache load( const Char8_t* dir,
-                            Config config,
-                            Char8_t** cache_file );
-
-        /// read or construct a directory cache
-        /**
-         *  This returns a cache for dir. If force is FcFalse, then an
-         *  existing, valid cache file will be used. Otherwise, a new cache
-         *  will be created by scanning the directory and that returned.
-         */
-        static Cache read( const Char8_t* dir,
-                            bool force,
-                            Config config );
-
-        /// load a cache file
-        /**
-         *  This function loads a directory cache from cache_file. If
-         *  file_stat is non-NULL, it will be filled with the results of
-         *  stat(2) on the cache file.
-         */
-        static Cache loadFile( const Char8_t* cache_file,
-                                struct stat* file_stat );
-
         /// unload a cache file
         /**
          *  This function dereferences cache. When no other references to it
@@ -142,6 +119,71 @@ class Cache
          */
         void unload();
 };
+
+
+/// traits class for FcCache
+/// Holds information about the fonts contained in a single directory.
+/**
+ *  Normal
+ *  applications need not worry about this as caches for font access are
+ *  automatically managed by the library. Applications dealing with cache
+ *  management may want to use some of these objects in their work,
+ *  however the included 'fc-cache' program generally suffices for all of that.
+ *
+ *  @see FcCache
+ */
+struct Cache
+{
+    typedef CacheDelegate Delegate;
+    typedef FcCache*      Storage;
+    typedef FcCache*      cobjptr;
+
+    /// load a directory cache
+    /**
+     *  Loads the cache related to dir. If no cache file exists,
+     *  returns NULL. The name of the cache file is returned in cache_file,
+     *  unless that is NULL. See also FcDirCacheRead.
+     */
+    static RefPtr<Cache> load( const Char8_t* dir,
+                        Config config,
+                        Char8_t** cache_file );
+
+    /// read or construct a directory cache
+    /**
+     *  This returns a cache for dir. If force is FcFalse, then an
+     *  existing, valid cache file will be used. Otherwise, a new cache
+     *  will be created by scanning the directory and that returned.
+     */
+    static RefPtr<Cache> read( const Char8_t* dir,
+                        bool force,
+                        Config config );
+
+    /// load a cache file
+    /**
+     *  This function loads a directory cache from cache_file. If
+     *  file_stat is non-NULL, it will be filled with the results of
+     *  stat(2) on the cache file.
+     */
+    static RefPtr<Cache> loadFile( const Char8_t* cache_file,
+                            struct stat* file_stat );
+
+    ///  This tries to clean up the cache directory of cache_dir. This
+    /// returns FcTrue if the operation is successfully complete.
+    /// otherwise FcFalse.
+    static bool dirClean (const Char8_t *cache_dir, bool verbose);
+
+    /// checks directory cache
+    /**
+     *  Returns FcTrue if dir has an associated valid cache file, else
+     *  returns FcFalse
+     */
+    static bool dirValid( const Char8_t* dir );
+
+};
+
+
+
+
 
 } // namespace fontconfig 
 

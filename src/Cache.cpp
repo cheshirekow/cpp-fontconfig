@@ -30,41 +30,54 @@
 namespace fontconfig
 {
 
-Cache::Cache(void* ptr):
-    m_ptr(ptr)
+
+const Char8_t* CacheDelegate::dir()
 {
+    return FcCacheDir( m_ptr);
 }
 
-void* Cache::get_ptr()
+const Char8_t* CacheDelegate::subdir(int i)
 {
-    return m_ptr;
+    return FcCacheSubdir(m_ptr, i);
 }
 
-const void* Cache::get_ptr() const
+int CacheDelegate::numSubdir()
 {
-    return m_ptr;
+    return FcCacheNumSubdir(m_ptr);
 }
 
-const Char8_t* Cache::dir()
+int CacheDelegate::numFont()
 {
-    return FcCacheDir( (FcCache*) (m_ptr));
-}
-
-const Char8_t* Cache::subdir(int i)
-{
-    return FcCacheSubdir((FcCache*) (m_ptr), i);
-}
-
-int Cache::numSubdir()
-{
-    return FcCacheNumSubdir((FcCache*) (m_ptr));
+    return FcCacheNumFont(m_ptr);
 }
 
 
 
-int Cache::numFont()
+void CacheDelegate::unload()
 {
-    return FcCacheNumFont((FcCache*) (m_ptr));
+    FcDirCacheUnload(m_ptr);
+}
+
+
+RefPtr<Cache> Cache::load(const Char8_t* dir, Config config, Char8_t** cache_file)
+{
+    return RefPtr<Cache>(
+            FcDirCacheLoad(dir, (FcConfig*)config.get_ptr(), cache_file)
+    );
+}
+
+RefPtr<Cache> Cache::read(const Char8_t* dir, bool force, Config config)
+{
+    return RefPtr<Cache>(
+            FcDirCacheRead(dir, force ? FcTrue : FcFalse, (FcConfig*)config.get_ptr() )
+    );
+}
+
+RefPtr<Cache> Cache::loadFile(const Char8_t* cache_file, struct stat* file_stat)
+{
+    return RefPtr<Cache>(
+            FcDirCacheLoadFile(cache_file, file_stat )
+    );
 }
 
 bool Cache::dirClean(const Char8_t* cache_dir, bool verbose)
@@ -77,30 +90,6 @@ bool Cache::dirValid(const Char8_t* dir)
     return FcDirCacheValid(dir);
 }
 
-Cache Cache::load(const Char8_t* dir, Config config, Char8_t** cache_file)
-{
-    return Cache(
-            FcDirCacheLoad(dir, (FcConfig*)config.get_ptr(), cache_file)
-    );
-}
-
-Cache Cache::read(const Char8_t* dir, bool force, Config config)
-{
-    return Cache(
-            FcDirCacheRead(dir, force ? FcTrue : FcFalse, (FcConfig*)config.get_ptr() )
-    );
-}
-
-Cache Cache::loadFile(const Char8_t* cache_file, struct stat* file_stat)
-{
-    return Cache(
-            FcDirCacheLoadFile(cache_file, file_stat )
-    );
-}
-
-void Cache::unload()
-{
-}
 
 
 
