@@ -80,19 +80,19 @@ bool ConfigDelegate::buildFonts()
     return FcConfigBuildFonts ( m_ptr );
 }
 
-StrList ConfigDelegate::getFontDirs()
+RefPtr<StrList> ConfigDelegate::getFontDirs()
 {
-    return StrList( FcConfigGetFontDirs( m_ptr ) );
+    return RefPtr<StrList>( FcConfigGetFontDirs( m_ptr ) );
 }
 
-StrList ConfigDelegate::getConfigDirs()
+RefPtr<StrList> ConfigDelegate::getConfigDirs()
 {
-    return StrList( FcConfigGetConfigDirs( m_ptr  ) );
+    return RefPtr<StrList>( FcConfigGetConfigDirs( m_ptr  ) );
 }
 
-StrList ConfigDelegate::getConfigFiles()
+RefPtr<StrList> ConfigDelegate::getConfigFiles()
 {
-    return StrList( FcConfigGetConfigFiles( m_ptr  ) );
+    return RefPtr<StrList>( FcConfigGetConfigFiles( m_ptr  ) );
 }
 
 RefPtr<Blanks> ConfigDelegate::getBlanks()
@@ -100,9 +100,9 @@ RefPtr<Blanks> ConfigDelegate::getBlanks()
     return RefPtr<Blanks>( FcConfigGetBlanks( m_ptr  ) ) ;
 }
 
-StrList ConfigDelegate::getCacheDirs() const
+RefPtr<StrList> ConfigDelegate::getCacheDirs() const
 {
-    return StrList( FcConfigGetCacheDirs( m_ptr  ) );
+    return RefPtr<StrList>( FcConfigGetCacheDirs( m_ptr  ) );
 }
 
 int ConfigDelegate::getRescanInterval()

@@ -27,11 +27,15 @@
 #ifndef CPPFONTCONFIG_STRLIST_H_
 #define CPPFONTCONFIG_STRLIST_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/StrSet.h>
 
 namespace fontconfig
 {
+
+class StrList;
 
 /// used during enumeration to safely and correctly walk the list of strings
 /// even while that list is edited in the middle of enumeration.
@@ -43,21 +47,31 @@ namespace fontconfig
  *  Also, since StrList is a wrapper for the pointer, you should probably
  *  only allocate an StrList on the stack.
  */
-class StrList
+class StrListDelegate
 {
     private:
-        void* m_ptr;
+        FcStrList* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit StrListDelegate(FcStrList* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        StrListDelegate( const StrListDelegate& other );
+
+        /// not assignable
+        StrListDelegate& operator=( const StrListDelegate& other );
 
     public:
-        StrList( void* ptr );
+        friend class RefPtr<StrList>;
 
-        void* get_ptr();
-
-        /// create a string iterator
-        /**
-         *  Creates an iterator to list the strings in set.
-         */
-        static StrList create (StrSet set);
+        StrListDelegate* operator->(){ return this; }
+        const StrListDelegate* operator->() const { return this; }
 
         /// get next string in iteration
         /**
@@ -71,6 +85,23 @@ class StrList
          */
         void done();
 };
+
+
+struct StrList
+{
+    typedef StrListDelegate Delegate;
+    typedef FcStrList*      Storage;
+    typedef FcStrList*      cobjptr;
+
+    /// create a string iterator
+    /**
+     *  Creates an iterator to list the strings in set.
+     */
+    static RefPtr<StrList> create (StrSet set);
+};
+
+
+
 
 } // namespace fontconfig 
 

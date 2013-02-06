@@ -116,14 +116,14 @@ class ConfigDelegate
          *  files for config. Does not include any subdirectories. If config
          *  is NULL, the current configuration is used.
          */
-        StrList getFontDirs();
+        RefPtr<StrList> getFontDirs();
 
 
         /// Get config directories
         /**
          *
          */
-        StrList getConfigDirs();
+        RefPtr<StrList> getConfigDirs();
 
 
         /// Get config files
@@ -131,7 +131,7 @@ class ConfigDelegate
          *  Returns the list of known configuration files used to generate
          *  config. If config is NULL, the current configuration is used.
          */
-        StrList getConfigFiles();
+        RefPtr<StrList> getConfigFiles();
 
 
         /// DEPRECATED used to return per-user cache filename
@@ -160,7 +160,7 @@ class ConfigDelegate
          *  cache file for a font directory. If config is NULL, the current
          *  configuration is used.
          */
-        StrList getCacheDirs() const;
+        RefPtr<StrList> getCacheDirs() const;
 
 
         /// Get config rescan interval

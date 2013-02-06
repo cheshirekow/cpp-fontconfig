@@ -30,31 +30,19 @@
 namespace fontconfig
 {
 
-StrList::StrList( void* ptr )
-:
-    m_ptr(ptr)
+RefPtr<StrList> StrList::create(StrSet set)
 {
-
+    return RefPtr<StrList>( FcStrListCreate( (FcStrSet*)set.get_ptr() ) );
 }
 
-void* StrList::get_ptr()
+Char8_t* StrListDelegate::next()
 {
-    return m_ptr;
+    return FcStrListNext( m_ptr );
 }
 
-StrList StrList::create(StrSet set)
+void StrListDelegate::done()
 {
-    return StrList ( FcStrListCreate( (FcStrSet*)set.get_ptr() ) );
-}
-
-Char8_t* StrList::next()
-{
-    return FcStrListNext( (FcStrList*) this );
-}
-
-void StrList::done()
-{
-    FcStrListDone( (FcStrList*)this );
+    FcStrListDone( m_ptr );
 }
 
 } // namespace fontconfig 
