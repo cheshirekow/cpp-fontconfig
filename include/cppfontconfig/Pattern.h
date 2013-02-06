@@ -102,7 +102,7 @@ class Pattern
          *  Returns a new pattern that only has those objects from p that are
          *  in os. If os is NULL, a duplicate of p is returned.
          */
-        Pattern filter(const ObjectSet& os);
+        Pattern filter(const RefPtr<ObjectSet> os);
 
         /// Compare patterns
         /**
@@ -115,7 +115,7 @@ class Pattern
          *  Returns whether pa and pb have exactly the same values for all of
          *  the objects in os.
          */
-        bool equalSubset (const Pattern& pb, const ObjectSet& os);
+        bool equalSubset (const Pattern& pb, const RefPtr<ObjectSet> os);
 
         /// Computer a pattern hash value
         /**

@@ -260,7 +260,7 @@ RefPtr<FontSet> ConfigDelegate::fontSort(
 
 RefPtr<FontSet> ConfigDelegate::fontSetList(
         RefPtr<FontSet>* sets, int nsets,
-        Pattern p, ObjectSet os)
+        Pattern p, RefPtr<ObjectSet> os)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
     for(int i=0; i < nsets; i++)
@@ -270,18 +270,18 @@ RefPtr<FontSet> ConfigDelegate::fontSetList(
                 FcFontSetList( m_ptr,
                                 ptrs,nsets,
                                 (FcPattern*)p.get_ptr(),
-                                (FcObjectSet*)os.get_ptr() ) );
+                                os.subvert() ) );
     delete [] ptrs;
 
     return returnMe;
 }
 
-RefPtr<FontSet> ConfigDelegate::fontList(Pattern p, ObjectSet os)
+RefPtr<FontSet> ConfigDelegate::fontList(Pattern p, RefPtr<ObjectSet> os)
 {
     return RefPtr<FontSet>(
             FcFontList( m_ptr,
                         (FcPattern*)p.get_ptr(),
-                        (FcObjectSet*)os.get_ptr() ) );
+                        os.subvert() ) );
 }
 
 

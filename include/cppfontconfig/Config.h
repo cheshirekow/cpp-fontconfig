@@ -361,7 +361,7 @@ class ConfigDelegate
                     RefPtr<FontSet>*  sets,
                     int          nsets,
                     Pattern      p,
-                    ObjectSet    os);
+                    RefPtr<ObjectSet>    os);
 
 
         /// List fonts
@@ -373,7 +373,7 @@ class ConfigDelegate
          */
         RefPtr<FontSet> fontList (
                     Pattern     p,
-                    ObjectSet   os);
+                    RefPtr<ObjectSet>   os);
 
 
         /// load a configuration file

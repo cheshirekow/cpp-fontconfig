@@ -132,11 +132,11 @@ Pattern Pattern::duplicate()
     return Pattern( FcPatternDuplicate( (FcPattern*)m_ptr ) );
 }
 
-Pattern Pattern::filter(const ObjectSet& os)
+Pattern Pattern::filter(const RefPtr<ObjectSet> os)
 {
     return Pattern(
             FcPatternFilter( (FcPattern*)m_ptr,
-                            (const FcObjectSet*)os.get_ptr() ) );
+                             os.subvert() ) );
 }
 
 bool Pattern::equal(const Pattern& pb)
@@ -145,12 +145,12 @@ bool Pattern::equal(const Pattern& pb)
                             (const FcPattern*) pb.m_ptr );
 }
 
-bool Pattern::equalSubset(const Pattern& pb, const ObjectSet& os)
+bool Pattern::equalSubset(const Pattern& pb, const RefPtr<ObjectSet> os)
 {
     return FcPatternEqualSubset(
                 (FcPattern*)m_ptr,
                 (const FcPattern*) pb.m_ptr,
-                (const FcObjectSet*) os.get_ptr() );
+                os.subvert() );
 
 }
 

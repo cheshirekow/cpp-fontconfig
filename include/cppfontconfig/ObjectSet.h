@@ -27,10 +27,13 @@
 #ifndef CPPFONTCONFIG_OBJECTSET_H_
 #define CPPFONTCONFIG_OBJECTSET_H_
 
+#include <fontconfig/fontconfig.h>
+#include <cppfontconfig/RefPtr.h>
+
 namespace fontconfig
 {
 
-
+class ObjectSet;
 
 
 /// holds a set of names and is used to specify which fields from fonts are
@@ -39,26 +42,34 @@ namespace fontconfig
  *  ObjectSet's are not reference counted. You may copy an object set but be
  *  sure to only destroy one of the copies.
  */
-class ObjectSet
+class ObjectSetDelegate
 {
     public:
         class Builder;
 
     private:
-        void* m_ptr;
+        FcObjectSet* m_ptr;
 
         /// wrap constructor
-        ObjectSet(void* ptr);
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit ObjectSetDelegate(FcObjectSet* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        ObjectSetDelegate( const ObjectSetDelegate& other );
+
+        /// not assignable
+        ObjectSetDelegate& operator=( const ObjectSetDelegate& other );
 
     public:
-        void* get_ptr();
-        const void* get_ptr() const;
+        friend class RefPtr<ObjectSet>;
 
-        /// Create an object set
-        /**
-         *  Creates an empty set.
-         */
-        static ObjectSet create();
+        ObjectSetDelegate* operator->(){ return this; }
+        const ObjectSetDelegate* operator->() const { return this; }
 
         /// Add to an object set
         /**
@@ -74,28 +85,49 @@ class ObjectSet
          */
         void destroy();
 
-        /// Build object set from args
-        /**
-         *  These build an object set from a null-terminated list of property
-         *  names.
-         */
-        static ObjectSet build( const char* first, ... );
 
 };
 
+
+
+
+struct ObjectSet
+{
+    typedef ObjectSetDelegate Delegate;
+    typedef FcObjectSet*      Storage;
+    typedef FcObjectSet*      cobjptr;
+
+    /// provides a simple interface for in-code building of object sets
+    class Builder;
+
+    /// Create an object set
+    /**
+     *  Creates an empty set.
+     */
+    static RefPtr<ObjectSet> create();
+
+    /// Build object set from args
+    /**
+     *  These build an object set from a null-terminated list of property
+     *  names.
+     */
+    static RefPtr<ObjectSet> build( const char* first, ... );
+
+};
 
 class ObjectSet::Builder
 {
     private:
-        ObjectSet m_objset;
+        RefPtr<ObjectSet> m_objset;
 
     public:
-        Builder( ObjectSet objset );
+        Builder( RefPtr<ObjectSet> objset );
 
         Builder& operator()(const char* object);
 
-        ObjectSet done();
+        RefPtr<ObjectSet> done();
 };
+
 
 } // namespace fontconfig 
 

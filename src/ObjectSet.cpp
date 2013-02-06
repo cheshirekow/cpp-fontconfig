@@ -30,50 +30,23 @@
 namespace fontconfig
 {
 
-ObjectSet::ObjectSet(void* ptr):
-    m_ptr(ptr)
-{
 
+
+bool ObjectSetDelegate::add(const char* obj)
+{
+    return FcObjectSetAdd( m_ptr, obj);
 }
 
-ObjectSet ObjectSet::create()
+void ObjectSetDelegate::destroy()
 {
-    return ObjectSet( FcObjectSetCreate() );
-}
-
-bool ObjectSet::add(const char* obj)
-{
-    return FcObjectSetAdd( (FcObjectSet*) (m_ptr), obj);
-}
-
-void ObjectSet::destroy()
-{
-    FcObjectSetDestroy((FcObjectSet*) (m_ptr));
-}
-
-void* ObjectSet::get_ptr()
-{
-    return m_ptr;
-}
-
-const void* ObjectSet::get_ptr() const
-{
-    return m_ptr;
-}
-
-ObjectSet ObjectSet::build(const char* first, ...)
-{
-
-    va_list argp;
-    va_start(argp, first);
-    ObjectSet result( FcObjectSetVaBuild(first, argp) );
-    va_end(argp);
-
-    return result;
+    FcObjectSetDestroy(m_ptr);
 }
 
 
-ObjectSet::Builder::Builder( ObjectSet objset ):
+
+
+
+ObjectSet::Builder::Builder( RefPtr<ObjectSet> objset ):
     m_objset(objset)
 {
 
@@ -81,13 +54,30 @@ ObjectSet::Builder::Builder( ObjectSet objset ):
 
 ObjectSet::Builder& ObjectSet::Builder::operator()( const char* object )
 {
-    m_objset.add(object);
+    m_objset->add(object);
     return *this;
 }
 
-ObjectSet ObjectSet::Builder::done()
+RefPtr<ObjectSet> ObjectSet::Builder::done()
 {
     return m_objset;
+}
+
+
+RefPtr<ObjectSet> ObjectSet::create()
+{
+    return RefPtr<ObjectSet>( FcObjectSetCreate() );
+}
+
+RefPtr<ObjectSet> ObjectSet::build(const char* first, ...)
+{
+
+    va_list argp;
+    va_start(argp, first);
+    RefPtr<ObjectSet> result( FcObjectSetVaBuild(first, argp) );
+    va_end(argp);
+
+    return result;
 }
 
 
