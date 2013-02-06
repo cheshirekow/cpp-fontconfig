@@ -24,7 +24,6 @@
  *  \brief  
  */
 
-#include <fontconfig/fontconfig.h>
 #include <fontconfig/fcfreetype.h>
 #include <cppfontconfig/freetype.h>
 #include <cppfreetype/cppfreetype.h>

@@ -15,7 +15,9 @@ find_package(PkgConfig REQUIRED)
 
 # add the src/ subdirectory to the list of directories cmake processes
 include_directories(include)
+add_subdirectory(include)
 add_subdirectory(src)
+add_subdirectory(cmake)
 add_subdirectory(test)
 
 
@@ -27,3 +29,4 @@ configure_file(
 
 # use Jan Woetzel's doxygen doc target
 include("${CMAKE_MODULE_PATH}/TargetDoc.cmake" OPTIONAL)
+

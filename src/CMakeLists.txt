@@ -7,7 +7,30 @@ include_directories(
     )
 
 
-add_library( ${CMAKE_PROJECT_NAME} 
+add_library( ${CMAKE_PROJECT_NAME} SHARED
+                Atomic.cpp
+                Blanks.cpp
+                CharSet.cpp
+                Cache.cpp
+                Config.cpp
+                Constant.cpp
+                file.cpp
+                FontSet.cpp
+                init.cpp
+                LangSet.cpp
+                Matrix.cpp
+                name.cpp
+                ObjectSet.cpp
+                ObjectType.cpp
+                Pattern.cpp
+                string.cpp
+                String.cpp
+                StrList.cpp
+                StrSet.cpp
+                TypeMap.cpp
+                )
+                
+add_library( ${CMAKE_PROJECT_NAME}_static STATIC
                 Atomic.cpp
                 Blanks.cpp
                 CharSet.cpp
@@ -31,7 +54,7 @@ add_library( ${CMAKE_PROJECT_NAME}
                 )
                 
  
-INSTALL( TARGETS ${CMAKE_PROJECT_NAME}
+INSTALL( TARGETS ${CMAKE_PROJECT_NAME} ${CMAKE_PROJECT_NAME}_static
   RUNTIME DESTINATION bin
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib

@@ -17,9 +17,13 @@ find_library(CppFontconfig_LIBRARY
   NAMES cppfontconfig
 )
 
+find_library(CppFontconfig_STATIC_LIBRARY
+  NAMES cppfontconfig_static
+)
+
 # Set the include dir variables and the libraries and let libfind_process do the rest.
 # NOTE: Singular variables for this library, plural for libraries this this lib depends on.
 set(CppFontconfig_PROCESS_INCLUDES CppFontconfig_INCLUDE_DIR)
-set(CppFontconfig_PROCESS_LIBS CppFontconfig_LIBRARY)
+set(CppFontconfig_PROCESS_LIBS CppFontconfig_LIBRARY CppFontconfig_STATIC_LIBRARY)
 libfind_process(CppFontconfig)
 
