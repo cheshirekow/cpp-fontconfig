@@ -60,7 +60,7 @@ Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const Matrix& m
     return *this;
 }
 
-Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const CharSet& cs)
+Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const RefPtr<CharSet>& cs)
 {
     m_pattern.add(obj,cs);
     return *this;
@@ -191,11 +191,11 @@ bool Pattern::add(const char* obj, const Matrix& m)
                                 (FcMatrix*)m.get_ptr() );
 }
 
-bool Pattern::add(const char* obj, const CharSet& c)
+bool Pattern::add(const char* obj, const RefPtr<CharSet>& c)
 {
     return FcPatternAddCharSet( (FcPattern*)m_ptr,
                                 obj,
-                                (const FcCharSet*)c.get_ptr() );
+                                c.subvert() );
 }
 
 bool Pattern::add(const char* obj, bool b)
@@ -243,15 +243,15 @@ Result_t Pattern::get(const char* obj, int n, Matrix& m)
     return result;
 }
 
-Result_t Pattern::get(const char* obj, int n, CharSet& c)
+Result_t Pattern::get(const char* obj, int n, RefPtr<CharSet>& c)
 {
-    FcCharSet* cc = (FcCharSet*)c.get_ptr();
+    FcCharSet* cc;
     Result_t result =
             (Result_t)FcPatternGetCharSet( (FcPattern*)m_ptr, obj, n, &cc );
 
     // char sets are reference counted so we need to increment the reference
     // since we're taking a pointer to it
-    c = CharSet( FcCharSetCopy(cc) );
+    c = cc;
 
     return result;
 }

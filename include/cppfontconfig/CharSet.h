@@ -27,11 +27,15 @@
 #ifndef CPPFONTCONFIG_CHARSET_H_
 #define CPPFONTCONFIG_CHARSET_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 #include <unistd.h>
 
 namespace fontconfig
 {
+
+class CharSet;
 
 /// An CharSet is an abstract type that holds the set of encoded Unicode
 /// chars in a font. Operations to build and compare these sets are provided.
@@ -40,59 +44,33 @@ namespace fontconfig
  *  wrapper provides a copy constructor which increments the reference count,
  *  and a destructor which decrements the reference count
  */
-class CharSet
+class CharSetDelegate
 {
     private:
-        void* m_ptr;
+        FcCharSet* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit CharSetDelegate(FcCharSet* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        CharSetDelegate( const CharSetDelegate& other );
+
+        /// not assignable
+        CharSetDelegate& operator=( const CharSetDelegate& other );
 
     public:
+        friend class RefPtr<CharSet>;
+
+        CharSetDelegate* operator->(){ return this; }
+        const CharSetDelegate* operator->() const { return this; }
+
         static const unsigned int MAP_SIZE = 256/32;
-
-        /// Wrap constructor, takes ownership of the pointer and will destroy
-        /// it (i.e. decrement reference count) in the destructor
-        CharSet( void* ptr );
-
-        /// copy a charset
-        /**
-         *  Makes a copy of src; note that this may not actually do anything
-         *  more than increment the reference count on src.
-         */
-        CharSet( const CharSet& other );
-
-        /// calls FcCharSetDestroy, decrementing reference count and deleting
-        /// data only when the reference count reaches zero
-        /**
-         *  FcCharSetDestroy decrements the reference count fcs. If the
-         *  reference count becomes zero, all memory referenced is freed.
-         */
-        ~CharSet();
-
-        /// returns the underlying FcCharSet pointer
-        void* get_ptr();
-        const void* get_ptr() const;
-
-        /// assignment operator
-        /**
-         *  Since charsets are reference counted, this operator drops the
-         *  current reference and increments the reference of the other by
-         *  calling FcCharSetDestroy on the old pointer and
-         *  FcCharSetCopy on the new pointer
-         */
-        CharSet& operator=( const CharSet& other );
-
-        /// Create an empty character set
-        /**
-         *  FcCharSetCreate allocates and initializes a new empty character
-         *  set object.
-         */
-        static CharSet create (void);
-
-        /// Destroy a character set
-        /**
-         *  FcCharSetDestroy decrements the reference count fcs. If the
-         *  reference count becomes zero, all memory referenced is freed.
-         */
-        // void destroy ();
 
         /// Add a character to a charset
         /**
@@ -110,36 +88,29 @@ class CharSet
          */
         bool delChar (Char32_t ucs4);
 
-        /// Copy a charset
-        /**
-         *  Makes a copy of src; note that this may not actually do anything
-         *  more than increment the reference count on src.
-         */
-        // CharSet copy ();
-
         /// Compare two charsets
         /**
          *  Returns whether a and b contain the same set of Unicode chars.
          */
-        bool equal (const CharSet& other);
+        bool equal (const RefPtr<CharSet>& other) const;
 
         /// Intersect charsets
         /**
          *  Returns a set including only those chars found in both a and b.
          */
-        CharSet intersect (const CharSet& other);
+        RefPtr<CharSet> intersect (const RefPtr<CharSet>& other);
 
         /// Add charsets
         /**
          *  Returns a set including only those chars found in either a or b.
          */
-        CharSet createUnion(const CharSet& other);
+        RefPtr<CharSet> createUnion(const RefPtr<CharSet>& other);
 
         /// Subtract charsets
         /**
          *  Returns a set including only those chars found in a but not b.
          */
-        CharSet subtract (const CharSet& other);
+        RefPtr<CharSet> subtract (const RefPtr<CharSet>& other);
 
         /// Merge charsets
         /**
@@ -149,38 +120,38 @@ class CharSet
          *  failure, either when a is a constant set or from running out of
          *  memory.
          */
-        bool merge (const CharSet& other, bool& changed);
-        bool merge (const CharSet& other);
+        bool merge (const RefPtr<CharSet>& other, bool& changed);
+        bool merge (const RefPtr<CharSet>& other);
 
         /// Check a charset for a char
         /**
          *  Returns whether fcs contains the char ucs4.
          */
-        bool hasChar (Char32_t ucs4);
+        bool hasChar (Char32_t ucs4) const;
 
         /// Count entries in a charset
         /**
          *  Returns the total number of Unicode chars in a.
          */
-        Char32_t count ();
+        Char32_t count () const;
 
         /// Intersect and count charsets
         /**
          *  Returns the number of chars that are in both a and b.
          */
-        Char32_t intersectCount (const CharSet& other);
+        Char32_t intersectCount (const RefPtr<CharSet>& other);
 
         /// Subtract and count charsets
         /**
          *  Returns the number of chars that are in a but not in b.
          */
-        Char32_t subtractCount (const CharSet& other);
+        Char32_t subtractCount (const RefPtr<CharSet>& other);
 
         /// Test for charset inclusion
         /**
          *  Returns whether a is a subset of b.
          */
-        bool isSubset (const CharSet& other);
+        bool isSubset (const RefPtr<CharSet>& other) const;
 
         /// Start enumerating charset contents
         /**
@@ -202,6 +173,29 @@ class CharSet
                Char32_t     map[MAP_SIZE],
                Char32_t     *next);
 };
+
+/// Traits class for a charset.
+/// An CharSet is an abstract type that holds the set of encoded Unicode
+/// chars in a font. Operations to build and compare these sets are provided.
+/**
+ *  The underlying FcCharSet object is reference counted, so this CharSet
+ *  wrapper provides a copy constructor which increments the reference count,
+ *  and a destructor which decrements the reference count
+ */
+struct CharSet
+{
+    typedef CharSetDelegate Delegate;
+    typedef FcCharSet*      Storage;
+    typedef FcCharSet*      cobjptr;
+
+    /// Create an empty character set
+    /**
+     *  FcCharSetCreate allocates and initializes a new empty character
+     *  set object.
+     */
+    static RefPtr<CharSet> create (void);
+};
+
 
 } // namespace fontconfig 
 

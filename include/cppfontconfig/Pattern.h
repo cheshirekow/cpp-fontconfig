@@ -192,7 +192,7 @@ class Pattern
          *  FcPatternAdd as they will provide compile-time typechecking. These
          *  all append values to any existing list of values.
          */
-        bool add( const char* obj, const CharSet& c );
+        bool add( const char* obj, const RefPtr<CharSet>& c );
 
         /// Add a boolean object
         /**
@@ -265,7 +265,7 @@ class Pattern
          *  referenced by the return value. Use these in preference to
          *  FcPatternGet to provide compile-time typechecking.
          */
-        Result_t get( const char* obj, int n, CharSet& c );
+        Result_t get( const char* obj, int n, RefPtr<CharSet>& c );
 
         /// get a boolean
         /**
@@ -587,7 +587,7 @@ class Pattern::Builder
         Builder& operator()( const char* obj, double            d);
         Builder& operator()( const char* obj, Char8_t*          s);
         Builder& operator()( const char* obj, const Matrix&     m);
-        Builder& operator()( const char* obj, const CharSet&   cs);
+        Builder& operator()( const char* obj, const RefPtr<CharSet>&   cs);
         Builder& operator()( const char* obj, bool              b);
         Builder& operator()( const char* obj, const LangSet&   ls);
 

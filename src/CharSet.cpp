@@ -30,133 +30,107 @@
 namespace fontconfig
 {
 
-CharSet::CharSet( void* ptr ):
-    m_ptr(ptr)
-{
 
+template<>
+void RefPtr<CharSet>::reference()
+{
+    m_ptr = FcCharSetCopy( m_ptr );
 }
 
-CharSet::CharSet( const CharSet& other )
+template<>
+void RefPtr<CharSet>::dereference()
 {
-    m_ptr = FcCharSetCopy( (FcCharSet*)other.m_ptr );
+    FcCharSetDestroy( m_ptr );
 }
 
-CharSet::~CharSet()
+
+
+
+
+bool CharSetDelegate::addChar(Char32_t ucs4)
 {
-    FcCharSetDestroy( (FcCharSet*)m_ptr );
+    return FcCharSetAddChar( m_ptr, ucs4 );
 }
 
-void* CharSet::get_ptr()
+bool CharSetDelegate::delChar(Char32_t ucs4)
 {
-    return m_ptr;
+    return FcCharSetDelChar( m_ptr, ucs4 );
 }
 
-const void* CharSet::get_ptr() const
+bool CharSetDelegate::equal(const RefPtr<CharSet>& other) const
 {
-    return m_ptr;
+    return FcCharSetEqual( m_ptr, other.subvert() );
 }
 
-CharSet& CharSet::operator=( const CharSet& other )
+RefPtr<CharSet> CharSetDelegate::intersect(const RefPtr<CharSet>& other)
 {
-    FcCharSetDestroy( (FcCharSet*)m_ptr );
-    m_ptr =  FcCharSetCopy( (FcCharSet*)other.m_ptr );
-    return *this;
+    return RefPtr<CharSet>(
+            FcCharSetIntersect( m_ptr, other.subvert() ) );
 }
 
-CharSet CharSet::create(void)
+RefPtr<CharSet> CharSetDelegate::createUnion(const RefPtr<CharSet>& other)
 {
-    return CharSet ( FcCharSetCreate() );
+    return RefPtr<CharSet>(
+            FcCharSetUnion(m_ptr, other.subvert() ) );
 }
 
-//void CharSet::destroy()
-//{
-//    FcCharSetDestroy( (FcCharSet*)m_ptr );
-//}
-
-bool CharSet::addChar(Char32_t ucs4)
+RefPtr<CharSet> CharSetDelegate::subtract(const RefPtr<CharSet>& other)
 {
-    return FcCharSetAddChar( (FcCharSet*)m_ptr, ucs4 );
+    return RefPtr<CharSet>(
+            FcCharSetSubtract( m_ptr, other.subvert() ) );
 }
 
-bool CharSet::delChar(Char32_t ucs4)
-{
-    return FcCharSetDelChar( (FcCharSet*)m_ptr, ucs4 );
-}
-
-//CharSet CharSet::copy()
-//{
-//    return CharSet( FcCharSetCopy( (FcCharSet*)m_ptr ) );
-//}
-
-bool CharSet::equal(const CharSet& other)
-{
-    return FcCharSetEqual( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
-}
-
-CharSet CharSet::intersect(const CharSet& other)
-{
-    return CharSet(
-            FcCharSetIntersect( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr ) );
-}
-
-CharSet CharSet::createUnion(const CharSet& other)
-{
-    return CharSet(
-            FcCharSetUnion((FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr ) );
-}
-
-CharSet CharSet::subtract(const CharSet& other)
-{
-    return CharSet(
-            FcCharSetSubtract( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr ) );
-}
-
-bool CharSet::merge(const CharSet& other, bool& changed)
+bool CharSetDelegate::merge(const RefPtr<CharSet>& other, bool& changed)
 {
     FcBool changed2;
-    bool result = FcCharSetMerge( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr, &changed2 );
+    bool result = FcCharSetMerge( m_ptr, other.subvert(), &changed2 );
     changed = changed2;
     return result;
 }
 
-bool CharSet::merge(const CharSet& other)
+bool CharSetDelegate::merge(const RefPtr<CharSet>& other)
 {
-    return FcCharSetMerge( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr, 0 );
+    return FcCharSetMerge( m_ptr, other.subvert(), 0 );
 }
 
-bool CharSet::hasChar(Char32_t ucs4)
+bool CharSetDelegate::hasChar(Char32_t ucs4) const
 {
-    return FcCharSetHasChar( (FcCharSet*)m_ptr, ucs4 );
+    return FcCharSetHasChar( m_ptr, ucs4 );
 }
 
-Char32_t CharSet::count()
+Char32_t CharSetDelegate::count() const
 {
-    return FcCharSetCount( (FcCharSet*)m_ptr );
+    return FcCharSetCount( m_ptr );
 }
 
-Char32_t CharSet::intersectCount(const CharSet& other)
+Char32_t CharSetDelegate::intersectCount(const RefPtr<CharSet>& other)
 {
-    return FcCharSetIntersectCount( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
+    return FcCharSetIntersectCount( m_ptr, other.subvert() );
 }
 
-Char32_t CharSet::subtractCount(const CharSet& other)
+Char32_t CharSetDelegate::subtractCount(const RefPtr<CharSet>& other)
 {
-    return FcCharSetSubtractCount( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
+    return FcCharSetSubtractCount( m_ptr, other.subvert() );
 }
 
-bool CharSet::isSubset(const CharSet& other)
+bool CharSetDelegate::isSubset(const RefPtr<CharSet>& other) const
 {
-    return FcCharSetIsSubset( (FcCharSet*)m_ptr, (FcCharSet*)other.m_ptr );
+    return FcCharSetIsSubset( m_ptr, other.subvert() );
 }
 
-Char32_t CharSet::firstPage(Char32_t map[MAP_SIZE], Char32_t* next)
+Char32_t CharSetDelegate::firstPage(Char32_t map[MAP_SIZE], Char32_t* next)
 {
-    return FcCharSetFirstPage( (FcCharSet*)m_ptr, map, next );
+    return FcCharSetFirstPage( m_ptr, map, next );
 }
 
-Char32_t CharSet::nextPage(Char32_t map[MAP_SIZE], Char32_t* next)
+Char32_t CharSetDelegate::nextPage(Char32_t map[MAP_SIZE], Char32_t* next)
 {
-    return FcCharSetNextPage( (FcCharSet*)m_ptr, map, next );
+    return FcCharSetNextPage( m_ptr, map, next );
+}
+
+RefPtr<CharSet> CharSet::create(void)
+{
+    return RefPtr<CharSet> ( FcCharSetCreate() );
 }
 
 } // namespace fontconfig 

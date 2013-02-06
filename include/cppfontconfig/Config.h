@@ -402,8 +402,8 @@ class Config
                     int         nsets,
                     Pattern     p,
                     bool        trim,
-                    CharSet*    csp,
-                    Result_t&   result);
+                    RefPtr<CharSet>* csp,
+                    Result_t&        result);
 
 
         ///  Return list of matching fonts
@@ -427,10 +427,10 @@ class Config
          *  used.
          */
         FontSet fontSort (
-                    Pattern     p,
-                    bool        trim,
-                    CharSet*    csp,
-                    Result_t&   result);
+                    Pattern             p,
+                    bool                trim,
+                    RefPtr<CharSet>*    csp,
+                    Result_t&           result);
 
 
         /// List fonts from a set of font sets

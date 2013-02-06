@@ -103,6 +103,13 @@ class RefPtr
             return m_ptr;
         }
 
+        /// return the stored pointer, subverting reference safety, see
+        /// specializations if Storage is not the same as cobjptr
+        const cobjptr subvert() const
+        {
+            return m_ptr;
+        }
+
         /// assignment operator, decreases reference count of current object,
         /// increases reference count of copied pointer
         RefPtr<Traits>& operator=( const RefPtr<Traits>& other )

@@ -224,7 +224,7 @@ FontSet Config::fontSetSort(
             int nsets,
             Pattern p,
             bool trim,
-            CharSet* csp,
+            RefPtr<CharSet>* csp,
             Result_t& result)
 {
     FcFontSet** ptrs = new FcFontSet*[nsets];
@@ -247,19 +247,14 @@ FontSet Config::fontSetSort(
     delete [] ptrs;
 
     if(csp)
-    {
-        // increment reference count on csp2
-        csp2 = FcCharSetCopy(csp2);
-
-        // reassign csp
-        *csp = CharSet(csp2);
-    }
+        *csp = csp2;
 
     result = (Result_t) result2;
     return returnMe;
 }
 
-FontSet Config::fontSort(Pattern p, bool trim, CharSet* csp, Result_t& result)
+FontSet Config::fontSort(Pattern p, bool trim,
+                            RefPtr<CharSet>* csp, Result_t& result)
 {
     FcCharSet*  csp2;
     FcResult    result2;
@@ -274,14 +269,7 @@ FontSet Config::fontSort(Pattern p, bool trim, CharSet* csp, Result_t& result)
                         &result2 ) );
 
     if(csp)
-    {
-        // increment reference count on csp2
-        csp2 = FcCharSetCopy(csp2);
-
-        // reassign csp
-        *csp = CharSet(csp2);
-    }
-
+        *csp = csp2;
     result = (Result_t)result2;
 
     return returnMe;
