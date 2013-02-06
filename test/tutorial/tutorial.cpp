@@ -29,8 +29,8 @@
 
 int main( int argc, char** argv )
 {
-    // shorten namespace for ease
-    namespace fc = fontconfig;
+    namespace fc=fontconfig;
+    using namespace fontconfig;
 
     // we'll use the second argument as the font name
     if( argc < 2 )
@@ -40,39 +40,39 @@ int main( int argc, char** argv )
     }
 
     // initialize font config
-    fc::init();
+    init();
 
     // we put this in a separate block because we want the pattern objects
-    // to destruct before we call fc::fini... otherwise (and I'm not sure but)
+    // to destruct before we call fini... otherwise (and I'm not sure but)
     // it might be possible that the patterns will try to free memory that
-    // fontconfig free's on fc::fini
+    // fontconfig free's on fini
     {
         // create a pattern to search for
-        fc::RefPtr<fc::Pattern> pat = fc::Pattern::create();
+        RefPtr<Pattern> pat = Pattern::create();
 
         // type safe version, but will not give compiler error if the
         // argument is the wrong type for the key
-        //pat.add(fc::FAMILY, (fc::Char8_t*)argv[1]);
+        //pat.add(FAMILY, (Char8_t*)argv[1]);
 
         // type safe but inextensible version that works only on built in
         // types, will give a compiler error if the parameter is not the
         // right type for the key
-        pat->addBuiltIn<fc::key::FAMILY>( (const fc::Char8_t*)argv[1] );
+        pat->addBuiltIn<key::FAMILY>( (const Char8_t*)argv[1] );
 
         // get a pointer to the default configuration
-        fc::RefPtr<fc::Config> config = fc::Config::getCurrent();
+        RefPtr<Config> config = Config::getCurrent();
 
         // perform substitutions
-        pat->substitute(fc::match::Pattern);
+        pat->substitute(match::Pattern);
         pat->defaultSubstitute();
 
         // get the match
-        fc::Result_t result;
-        fc::RefPtr<fc::Pattern> match = config->fontMatch(pat, result);
+        Result_t result;
+        RefPtr<Pattern> match = config->fontMatch(pat, result);
 
         // get the closest matching font file
-        fc::Char8_t*    file;
-        int             index;
+        Char8_t*    file;
+        int         index;
 
         // we should have a better get/add interface... this isn't very
         // c++-y
@@ -89,19 +89,19 @@ int main( int argc, char** argv )
         // when their destructors are called
 
         // test the ObjectTypeList
-        fc::ObjectTypeList oList = fc::ObjectTypeList::create()
-            ("ObjectA", fc::type::Integer )
-            ("ObjectB", fc::type::String  )
-            ("ObjectC", fc::type::Double  )
+        ObjectTypeList oList = ObjectTypeList::create()
+            ("ObjectA", type::Integer )
+            ("ObjectB", type::String  )
+            ("ObjectC", type::Double  )
             ();
 
         std::cout << "number of items in the list: "
                   << oList.get_nItems() << std::endl;
 
-        fc::ConstantList cList = fc::ConstantList::create()
-            ((const fc::Char8_t*)"NameA", "ObjectA", 1001  )
-            ((const fc::Char8_t*)"NameB", "ObjectB", 1002  )
-            ((const fc::Char8_t*)"NameC", "ObjectC", 1003  )
+        ConstantList cList = ConstantList::create()
+            ((const Char8_t*)"NameA", "ObjectA", 1001  )
+            ((const Char8_t*)"NameB", "ObjectB", 1002  )
+            ((const Char8_t*)"NameC", "ObjectC", 1003  )
             ();
 
         std::cout << "number of items in the list: "
@@ -109,7 +109,7 @@ int main( int argc, char** argv )
     }
 
     // unload fontconfig
-    fc::fini();
+    fini();
 
     return 0;
 }
