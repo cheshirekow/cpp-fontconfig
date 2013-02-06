@@ -30,85 +30,70 @@
 namespace fontconfig
 {
 
-LangSet::LangSet( void* ptr ):
-    m_ptr(ptr)
-{
 
+RefPtr<LangSet> LangSet::create()
+{
+    return RefPtr<LangSet>( FcLangSetCreate( ) );
 }
 
-void* LangSet::get_ptr()
+void LangSetDelegate::destroy()
 {
-    return m_ptr;
+    return FcLangSetDestroy( m_ptr );
 }
 
-const void* LangSet::get_ptr() const
+RefPtr<LangSet> LangSetDelegate::copy()
 {
-    return m_ptr;
+    return RefPtr<LangSet>( FcLangSetCopy( m_ptr ) );
 }
 
-LangSet LangSet::create()
+bool LangSetDelegate::add(const Char8_t* lang)
 {
-    return LangSet( FcLangSetCreate( ) );
+    return FcLangSetAdd( m_ptr, lang);
 }
 
-void LangSet::destroy()
+bool LangSetDelegate::del(const Char8_t* lang)
 {
-    return FcLangSetDestroy( (FcLangSet*)m_ptr );
+    return FcLangSetDel( m_ptr, lang);
 }
 
-LangSet LangSet::copy()
+LangResult_t LangSetDelegate::hasLang(const Char8_t* lang)
 {
-    return LangSet( FcLangSetCopy( (FcLangSet*)m_ptr ) );
+    return (LangResult_t) FcLangSetHasLang( m_ptr, lang);
 }
 
-bool LangSet::add(const Char8_t* lang)
+LangResult_t LangSetDelegate::compare(const RefPtr<LangSet> lsb)
 {
-    return FcLangSetAdd( (FcLangSet*)m_ptr, lang);
+    return (LangResult_t) FcLangSetCompare( m_ptr, lsb.subvert());
 }
 
-bool LangSet::del(const Char8_t* lang)
+bool LangSetDelegate::contains(const RefPtr<LangSet> lsb)
 {
-    return FcLangSetDel( (FcLangSet*)m_ptr, lang);
+    return FcLangSetContains( m_ptr, lsb.subvert());
 }
 
-LangResult_t LangSet::hasLang(const Char8_t* lang)
+bool LangSetDelegate::equal(const RefPtr<LangSet> lsb)
 {
-    return (LangResult_t) FcLangSetHasLang( (FcLangSet*)m_ptr, lang);
+    return FcLangSetEqual( m_ptr, lsb.subvert());
 }
 
-LangResult_t LangSet::compare(const LangSet lsb)
+Char32_t LangSetDelegate::hash()
 {
-    return (LangResult_t) FcLangSetCompare( (FcLangSet*)m_ptr, (FcLangSet*)lsb.m_ptr);
+    return FcLangSetHash( m_ptr );
 }
 
-bool LangSet::contains(const LangSet lsb)
+StrSet LangSetDelegate::getLangs()
 {
-    return FcLangSetContains( (FcLangSet*)m_ptr, (FcLangSet*)lsb.m_ptr);
+    return StrSet( FcLangSetGetLangs( m_ptr ) );
 }
 
-bool LangSet::equal(const LangSet lsb)
+RefPtr<LangSet> LangSetDelegate::creatUnion(const RefPtr<LangSet> b)
 {
-    return FcLangSetEqual( (FcLangSet*)m_ptr, (FcLangSet*)lsb.m_ptr);
+    return RefPtr<LangSet>( FcLangSetUnion( m_ptr, b.subvert() ) );
 }
 
-Char32_t LangSet::hash()
+RefPtr<LangSet> LangSetDelegate::subtract(const RefPtr<LangSet> b)
 {
-    return FcLangSetHash( (FcLangSet*)m_ptr );
-}
-
-StrSet LangSet::getLangs()
-{
-    return StrSet( FcLangSetGetLangs( (FcLangSet*)m_ptr ) );
-}
-
-LangSet LangSet::creatUnion(const LangSet b)
-{
-    return LangSet( FcLangSetUnion( (FcLangSet*)m_ptr, (FcLangSet*)b.m_ptr ) );
-}
-
-LangSet LangSet::subtract(const LangSet b)
-{
-    return LangSet( FcLangSetSubtract( (FcLangSet*)m_ptr, (FcLangSet*)b.m_ptr) );
+    return RefPtr<LangSet>( FcLangSetSubtract( m_ptr, b.subvert() ) );
 }
 
 } // namespace fontconfig 

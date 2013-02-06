@@ -210,7 +210,7 @@ class Pattern
          *  FcPatternAdd as they will provide compile-time typechecking. These
          *  all append values to any existing list of values.
          */
-        bool add( const char* obj, const LangSet& ls );
+        bool add( const char* obj, const RefPtr<LangSet> ls );
 
         /// Get an integer
         /**
@@ -290,7 +290,7 @@ class Pattern
          *  @note Do NOT destroy this langset, as it is simply a copy of the
          *        pointer stored internally in the pattern
          */
-        Result_t get( const char* obj, int n, LangSet& ls );
+        Result_t get( const char* obj, int n, RefPtr<LangSet>& ls );
 
 
 
@@ -589,7 +589,7 @@ class Pattern::Builder
         Builder& operator()( const char* obj, const Matrix&     m);
         Builder& operator()( const char* obj, const RefPtr<CharSet>&   cs);
         Builder& operator()( const char* obj, bool              b);
-        Builder& operator()( const char* obj, const LangSet&   ls);
+        Builder& operator()( const char* obj, const RefPtr<LangSet>&   ls);
 
         Pattern  done();
 };

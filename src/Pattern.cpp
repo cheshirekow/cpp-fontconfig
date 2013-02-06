@@ -72,7 +72,7 @@ Pattern::Builder& Pattern::Builder::operator ()(const char* obj, bool b)
     return *this;
 }
 
-Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const LangSet& ls)
+Pattern::Builder& Pattern::Builder::operator ()(const char* obj, const RefPtr<LangSet>& ls)
 {
     m_pattern.add(obj,ls);
     return *this;
@@ -205,11 +205,11 @@ bool Pattern::add(const char* obj, bool b)
                                 b ? FcTrue : FcFalse );
 }
 
-bool Pattern::add(const char* obj, const LangSet& ls)
+bool Pattern::add(const char* obj, const RefPtr<LangSet> ls)
 {
     return FcPatternAddLangSet( (FcPattern*)m_ptr,
                                 obj,
-                                (const FcLangSet*)ls.get_ptr() );
+                                ls.subvert() );
 }
 
 Result_t Pattern::get(const char* obj, int n, int& i)
@@ -265,13 +265,13 @@ Result_t Pattern::get(const char* obj, int n, bool& b)
     return result;
 }
 
-Result_t Pattern::get(const char* obj, int n, LangSet& ls)
+Result_t Pattern::get(const char* obj, int n, RefPtr<LangSet>& ls)
 {
     FcLangSet* lss;
     Result_t result =
             (Result_t)FcPatternGetLangSet( (FcPattern*)m_ptr, obj, n, &lss );
 
-    ls = LangSet( lss );
+    ls = lss;
     return result;
 }
 

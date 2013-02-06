@@ -27,11 +27,15 @@
 #ifndef CPPFONTCONFIG_LANGSET_H_
 #define CPPFONTCONFIG_LANGSET_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/StrSet.h>
 
 namespace fontconfig
 {
+
+class LangSet;
 
 /// An LangSet is an abstract type that holds the set of languages supported
 /// by a font.
@@ -42,22 +46,31 @@ namespace fontconfig
  *  except for MS, NA, PA, PS, QU, RN, RW, SD, SG, SN, SU and ZA. If you have
  *  orthographic information for any of these languages, please submit them.
  */
-class LangSet
+class LangSetDelegate
 {
     private:
-        void* m_ptr;
+        FcLangSet* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit LangSetDelegate(FcLangSet* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        LangSetDelegate( const LangSetDelegate& other );
+
+        /// not assignable
+        LangSetDelegate& operator=( const LangSetDelegate& other );
 
     public:
-        LangSet( void* ptr );
+        friend class RefPtr<LangSet>;
 
-        void* get_ptr();
-        const void* get_ptr() const;
-
-        /// create a langset object
-        /**
-         *  FcLangSetCreate creates a new FcLangSet object.
-         */
-        static LangSet  create (void);
+        LangSetDelegate* operator->(){ return this; }
+        const LangSetDelegate* operator->() const { return this; }
 
         /// destroy a langset object
         /**
@@ -71,7 +84,7 @@ class LangSet
          *  FcLangSetCopy creates a new FcLangSet object and populates it with
          *  the contents of ls.
          */
-        LangSet  copy ();
+        RefPtr<LangSet>  copy ();
 
         /// add a language to a langset
         /**
@@ -109,7 +122,7 @@ class LangSet
          *  FcLangDifferentTerritory. If they share no languages in common,
          *  this function returns FcLangDifferentLang.
          */
-        LangResult_t  compare (const LangSet lsb);
+        LangResult_t  compare (const RefPtr<LangSet> lsb);
 
         /// check langset subset relation
         /**
@@ -118,14 +131,14 @@ class LangSet
          *  exactly the language, or either the language or ls_a has no
          *  territory.
          */
-        bool  contains (const LangSet lsb);
+        bool  contains (const RefPtr<LangSet> lsb);
 
         /// test for matching langsets
         /**
          *  Returns FcTrue if and only if ls_a supports precisely the same
          *  language and territory combinations as ls_b.
          */
-        bool  equal (const LangSet lsb);
+        bool  equal (const RefPtr<LangSet> lsb);
 
         /// return a hash value for a langset
         /**
@@ -147,15 +160,32 @@ class LangSet
          *  Returns a set including only those languages found in either
          *  ls_a or ls_b.
          */
-        LangSet  creatUnion (const LangSet b);
+        RefPtr<LangSet>  creatUnion (const RefPtr<LangSet> b);
 
         /// Subtract langsets
         /**
          *  Returns a set including only those languages found in ls_a but
          *  not in ls_b.
          */
-        LangSet  subtract (const LangSet b);
+        RefPtr<LangSet>  subtract (const RefPtr<LangSet> b);
 };
+
+
+struct LangSet
+{
+    typedef LangSetDelegate Delegate;
+    typedef FcLangSet*      Storage;
+    typedef FcLangSet*      cobjptr;
+
+    /// create a langset object
+    /**
+     *  FcLangSetCreate creates a new FcLangSet object.
+     */
+    static RefPtr<LangSet>  create (void);
+
+
+};
+
 
 } // namespace fontconfig 
 
