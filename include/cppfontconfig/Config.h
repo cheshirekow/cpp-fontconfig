@@ -310,7 +310,7 @@ class Config
          *  Performs the sequence of pattern modification operations, if kind
          *  is FcMatchPattern, then those tagged as pattern operations are
          *  applied, else if kind is FcMatchFont, those tagged as font
-         *  operations are applied and p_pat is used for <test> elements with
+         *  operations are applied and p_pat is used for test elements with
          *  target=pattern. Returns FcFalse if the substitution cannot be
          *  performed (due to allocation failure). Otherwise returns FcTrue.
          *  If config is NULL, the current configuration is used.

@@ -33,7 +33,7 @@ namespace fontconfig
 {
 
 
-///< holds a list of Unicode chars which are expected to be blank
+/// holds a list of Unicode chars which are expected to be blank
 /**
  *  unexpectedly
  *  blank chars are assumed to be invalid and are elided from the charset

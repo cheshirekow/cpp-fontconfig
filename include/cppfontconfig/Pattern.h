@@ -365,7 +365,7 @@ class Pattern
          *  stream; and tags which are interpreted to construct text from the
          *  pattern in a variety of ways (explained below). Special characters
          *  can be escaped using backslash. C-string style special characters
-         *  like \n and \r are also supported (this is useful when the format
+         *  like \\n and \\r are also supported (this is useful when the format
          *  string is not a C string literal). It is advisable to always escape
          *  curly braces that are meant to be copied to the output as ordinary
          *  characters.
