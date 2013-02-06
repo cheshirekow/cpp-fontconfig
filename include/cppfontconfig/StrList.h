@@ -97,7 +97,7 @@ struct StrList
     /**
      *  Creates an iterator to list the strings in set.
      */
-    static RefPtr<StrList> create (StrSet set);
+    static RefPtr<StrList> create (RefPtr<StrSet> set);
 };
 
 

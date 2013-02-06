@@ -31,12 +31,12 @@
 namespace fontconfig
 {
 
-bool fileScan(RefPtr<FontSet> set, StrSet dirs, RefPtr<Blanks>blanks,
+bool fileScan(RefPtr<FontSet> set, RefPtr<StrSet> dirs, RefPtr<Blanks>blanks,
         const Char8_t* file, bool force)
 {
     return FcFileScan(
                 set.subvert(),
-                (FcStrSet*)dirs.get_ptr(),
+                dirs.subvert(),
                 0,
                 blanks.subvert(),
                 file,
@@ -48,12 +48,12 @@ bool fileIsDir(const Char8_t* file)
     return FcFileIsDir(file);
 }
 
-bool dirScan(RefPtr<FontSet> set, StrSet dirs, RefPtr<Blanks> blanks,
+bool dirScan(RefPtr<FontSet> set, RefPtr<StrSet> dirs, RefPtr<Blanks> blanks,
         const Char8_t* dir, bool force)
 {
     return FcDirScan(
                 set.subvert(),
-                (FcStrSet*)dirs.get_ptr(),
+                dirs.subvert(),
                 (FcFileCache*) 0,
                 blanks.subvert(),
                 dir,

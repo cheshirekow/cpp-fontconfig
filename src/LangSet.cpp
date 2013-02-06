@@ -81,9 +81,9 @@ Char32_t LangSetDelegate::hash()
     return FcLangSetHash( m_ptr );
 }
 
-StrSet LangSetDelegate::getLangs()
+RefPtr<StrSet> LangSetDelegate::getLangs()
 {
-    return StrSet( FcLangSetGetLangs( m_ptr ) );
+    return  FcLangSetGetLangs( m_ptr );
 }
 
 RefPtr<LangSet> LangSetDelegate::creatUnion(const RefPtr<LangSet> b)

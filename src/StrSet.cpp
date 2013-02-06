@@ -30,51 +30,40 @@
 namespace fontconfig
 {
 
-StrSet::StrSet(void* ptr):
-    m_ptr(ptr)
+RefPtr<StrSet> StrSet::create(void)
 {
-
+    return FcStrSetCreate();
 }
 
-StrSet StrSet::create(void)
+
+bool StrSetDelegate::setMember(const Char8_t* s)
 {
-    return StrSet( FcStrSetCreate() );
+    return FcStrSetMember( m_ptr, s );
 }
 
-void* StrSet::get_ptr()
+bool StrSetDelegate::equal(RefPtr<StrSet> other)
 {
-    return m_ptr;
+    return FcStrSetEqual( m_ptr, other.subvert() );
 }
 
-bool StrSet::setMember(const Char8_t* s)
+bool StrSetDelegate::add(const Char8_t* s)
 {
-    return FcStrSetMember( (FcStrSet*)this, s );
+    return FcStrSetAdd( m_ptr, s );
 }
 
-bool StrSet::equal(StrSet other)
+bool StrSetDelegate::addFilename(const Char8_t* s)
 {
-    return FcStrSetEqual(   (FcStrSet*)m_ptr,
-                            (FcStrSet*)other.m_ptr );
+    return FcStrSetAddFilename( m_ptr, s );
 }
 
-bool StrSet::add(const Char8_t* s)
+bool StrSetDelegate::del(const Char8_t* s)
 {
-    return FcStrSetAdd( (FcStrSet*)m_ptr, s );
+    return FcStrSetDel( m_ptr, s );
 }
 
-bool StrSet::addFilename(const Char8_t* s)
+void StrSetDelegate::destroy()
 {
-    return FcStrSetAddFilename( (FcStrSet*)m_ptr, s );
-}
-
-bool StrSet::del(const Char8_t* s)
-{
-    return FcStrSetDel( (FcStrSet*)m_ptr, s );
-}
-
-void StrSet::destroy()
-{
-    return FcStrSetDestroy( (FcStrSet*)m_ptr );
+    return FcStrSetDestroy( m_ptr );
 }
 
 } // namespace fontconfig 

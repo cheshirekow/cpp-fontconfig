@@ -27,10 +27,14 @@
 #ifndef CPPFONTCONFIG_STRSET_H_
 #define CPPFONTCONFIG_STRSET_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 
 namespace fontconfig
 {
+
+class StrSet;
 
 /// holds a list of strings that can be appended to and enumerated.
 /**
@@ -44,20 +48,31 @@ namespace fontconfig
  *  Also, since StrSet is a wrapper for the pointer, you should probably
  *  only allocate an StrSet on the stack.
  */
-class StrSet
+class StrSetDelegate
 {
     private:
-        void* m_ptr;
+        FcStrSet* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit StrSetDelegate(FcStrSet* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        StrSetDelegate( const StrSetDelegate& other );
+
+        /// not assignable
+        StrSetDelegate& operator=( const StrSetDelegate& other );
 
     public:
-        StrSet(void* ptr);
-        void* get_ptr();
+        friend class RefPtr<StrSet>;
 
-        /// create a string set
-        /**
-         *  Create an empty set.
-         */
-        static StrSet  create(void);
+        StrSetDelegate* operator->(){ return this; }
+        const StrSetDelegate* operator->() const { return this; }
 
         /// check set for membership
         /**
@@ -70,7 +85,7 @@ class StrSet
          *  Returns whether set_a contains precisely the same strings as set_b.
          *  Ordering of strings within the two sets is not considered.
          */
-        bool equal (StrSet other);
+        bool equal (RefPtr<StrSet> other);
 
         /// add to a string set
         /**
@@ -97,6 +112,20 @@ class StrSet
          *  Destroys set.
          */
         void destroy ();
+};
+
+
+struct StrSet
+{
+    typedef StrSetDelegate Delegate;
+    typedef FcStrSet*      Storage;
+    typedef FcStrSet*      cobjptr;
+
+    /// create a string set
+    /**
+     *  Create an empty set.
+     */
+    static RefPtr<StrSet>  create(void);
 };
 
 

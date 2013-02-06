@@ -30,9 +30,9 @@
 namespace fontconfig
 {
 
-RefPtr<StrList> StrList::create(StrSet set)
+RefPtr<StrList> StrList::create(RefPtr<StrSet> set)
 {
-    return RefPtr<StrList>( FcStrListCreate( (FcStrSet*)set.get_ptr() ) );
+    return FcStrListCreate( set.subvert() );
 }
 
 Char8_t* StrListDelegate::next()

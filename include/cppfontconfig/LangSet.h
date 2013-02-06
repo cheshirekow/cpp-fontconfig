@@ -153,7 +153,7 @@ class LangSetDelegate
         /**
          *
          */
-        StrSet getLangs ();
+        RefPtr<StrSet> getLangs ();
 
         /// Add langsets
         /**
