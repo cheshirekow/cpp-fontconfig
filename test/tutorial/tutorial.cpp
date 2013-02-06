@@ -87,6 +87,25 @@ int main( int argc, char** argv )
 
         // no need to do cleanup, pattern and match will free their memory
         // when their destructors are called
+
+        // test the ObjectTypeList
+        fc::ObjectTypeList oList = fc::ObjectTypeList::create()
+            ("ObjectA", fc::type::Integer )
+            ("ObjectB", fc::type::String  )
+            ("ObjectC", fc::type::Double  )
+            ();
+
+        std::cout << "number of items in the list: "
+                  << oList.get_nItems() << std::endl;
+
+        fc::ConstantList cList = fc::ConstantList::create()
+            ((const fc::Char8_t*)"NameA", "ObjectA", 1001  )
+            ((const fc::Char8_t*)"NameB", "ObjectB", 1002  )
+            ((const fc::Char8_t*)"NameC", "ObjectC", 1003  )
+            ();
+
+        std::cout << "number of items in the list: "
+                  << cList.get_nItems() << std::endl;
     }
 
     // unload fontconfig

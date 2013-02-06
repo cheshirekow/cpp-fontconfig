@@ -42,47 +42,76 @@ namespace fontconfig {
  *  Example usage:
  *
  *  \code{.cpp}
- *      ObjectTypeList list = ObjectTypeList::create()
+ *      ObjectTypeList* list = ObjectTypeList::create()
  *          ( "ObjectA", type::Integer )
  *          ( "ObjectB", type::String  )
  *          ( "ObjectC", type::Double  )
  *          ();
  *  \endcode
+ *
+ *  @note an ObjectTypeList is not copyable or publicly constructable. It can
+ *        only be constructed in the manner of the above example. We take
+ *        advantage of this by setting @p m_selfDestruct of the list
+ *        returned by ObjectTypeList::create() to false, which means that
+ *        the @p m_selfDestruct bit of the created list is true
  */
 class ObjectTypeList
 {
     public:
         class Item;
+        class BuildToken;
 
     private:
-        void*   m_ptr;
-        int     m_iItem;
-        int     m_nItems;
-        bool    m_selfDestruct;
+        FcObjectType*   m_ptr;      ///< array of objects
+        int             m_nItems;   ///< number of items
 
-        ObjectTypeList(bool selfDestruct);
-        ObjectTypeList(const ObjectTypeList& other );
+        static BuildToken sm_seed;
+
+        /// private constructor, use ObjectTypeList::create() instead
+        ObjectTypeList();
 
     public:
-        void* get_ptr();
-        const void* get_ptr() const;
+        /// construct an object from a token
+        ObjectTypeList( BuildToken& token );
+
+        /// copy a list
+        ObjectTypeList(const ObjectTypeList& other );
+
+        /// return the c-array of objects
+        FcObjectType* get_ptr();
+
+        /// return a const c-array of objects
+        const FcObjectType* get_ptr() const;
+
+        /// return the number of objects
         int get_nItems() const;
 
-        friend class Item;
-
-        /// will destroy underlying data if m_selfDestruct is true, otherwise
-        /// does nothing
-        /**
-         *  self destruct is only set true on the object returned from
-         *  Item::finish. There is an additional temporary which is created
-         *  on the heap and destroyed by Item::finish, and that one does
-         *  not destroy the underlying data
-         */
-        ~ObjectTypeList();
+        /// destroy underlying data
+        void destroy();
 
         /// creates a new Object type list, and returns an item which points
         /// to it
         static Item create();
+};
+
+class ObjectTypeList::BuildToken
+{
+    private:
+        FcObjectType*   m_ptr;      ///< array of objects
+        int             m_iItem;    ///< index of the current item to write
+        int             m_nItems;   ///< number of items
+
+        /// can only be created by ObjectTypeList
+        explicit BuildToken(){}
+
+        /// cannot be copied
+        BuildToken( const BuildToken& other ){}
+
+        /// cannot be copied
+        BuildToken& operator=( const BuildToken& other ){ return *this; }
+
+        /// initializes fields to zero
+        void init();
 
         /// increments the item count
         /**
@@ -97,13 +126,15 @@ class ObjectTypeList
          */
         void allocate();
 
-        /// writes data and increments counter, returns true if this is the
-        /// last item
+        /// writes data and increments counter
         /**
          *  Called by Item d'tor
          */
-        bool write( const char* object, Type_t type );
+        void write( const char* object, Type_t type );
 
+    public:
+        friend class ObjectTypeList;
+        friend class ObjectTypeList::Item;
 
 
 
@@ -112,14 +143,15 @@ class ObjectTypeList
 class ObjectTypeList::Item
 {
     private:
-        ObjectTypeList*     m_list;
-        const char*         m_object;
-        Type_t              m_type;
+        ObjectTypeList::BuildToken&     m_token;
+        const char*                     m_object;
+        Type_t                          m_type;
+        bool                            m_isLast;
 
     public:
         /// initializes the item as an empty last item and increments the
         /// number of items in the list
-        Item( ObjectTypeList* list );
+        Item( ObjectTypeList::BuildToken& token );
 
         /// writes the item data to the list
         ~Item();
@@ -129,7 +161,7 @@ class ObjectTypeList::Item
 
         /// finalizes the initialization by signaling the list to allocate
         /// data, the data is filled by ~Item()
-        ObjectTypeList operator()();
+        ObjectTypeList::BuildToken& operator()();
 };
 
 
@@ -152,36 +184,60 @@ class ConstantList
 {
     public:
         class Item;
+        class BuildToken;
 
     private:
-        void*   m_ptr;
-        int     m_iItem;
-        int     m_nItems;
-        bool    m_selfDestruct;
+        FcConstant*   m_ptr;
+        int           m_nItems;
 
-        ConstantList(bool selfDestruct);
-        ConstantList(const ConstantList& other );
+        static BuildToken sm_seed;
+
+        /// private constructor, use ObjectTypeList::create() instead
+        ConstantList();
 
     public:
-        void* get_ptr();
-        const void* get_ptr() const;
+        /// construct an object from a token
+        ConstantList(ConstantList::BuildToken& token );
+
+        /// copy a list
+        ConstantList(const ConstantList& other );
+
+        /// return a c-array of constants
+        FcConstant* get_ptr();
+
+        /// return a  const c-array of constants
+        const FcConstant* get_ptr() const;
+
+        /// return the number of constants
         int get_nItems() const;
 
-        friend class Item;
-
-        /// will destroy underlying data if m_selfDestruct is true, otherwise
-        /// does nothing
-        /**
-         *  self destruct is only set true on the object returned from
-         *  Item::finish. There is an additional temporary which is created
-         *  on the heap and destroyed by Item::finish, and that one does
-         *  not destroy the underlying data
-         */
-        ~ConstantList();
+        /// destroy underlying data
+        void destroy();
 
         /// creates a new Object type list, and returns an item which points
         /// to it
         static Item create();
+
+};
+
+class ConstantList::BuildToken
+{
+    private:
+        FcConstant* m_ptr;      ///< array of objects
+        int         m_iItem;    ///< index of the current item to write
+        int         m_nItems;   ///< number of items
+
+        /// can only be created by ObjectTypeList
+        explicit BuildToken(){}
+
+        /// cannot be copied
+        BuildToken( const BuildToken& other ){}
+
+        /// cannot be copied
+        BuildToken& operator=( const BuildToken& other ){ return *this; }
+
+        /// initializes fields to zero
+        void init();
 
         /// increments the item count
         /**
@@ -201,25 +257,26 @@ class ConstantList
         /**
          *  Called by Item d'tor
          */
-        bool write( const Char8_t* name, const char* object, int value );
+        void write( const Char8_t* name, const char* object, int value );
 
-
-
-
+    public:
+        friend class ConstantList;
+        friend class ConstantList::Item;
 };
 
 class ConstantList::Item
 {
     private:
-        ConstantList*   m_list;
-        const Char8_t*  m_name;
-        const char*     m_object;
-        int             m_value;
+        ConstantList::BuildToken&   m_token;
+        const Char8_t*              m_name;
+        const char*                 m_object;
+        int                         m_value;
+        bool                        m_isLast;
 
     public:
         /// initializes the item as an empty last item and increments the
         /// number of items in the list
-        Item( ConstantList* list );
+        Item( ConstantList::BuildToken& token );
 
         /// writes the item data to the list
         ~Item();
@@ -229,7 +286,7 @@ class ConstantList::Item
 
         /// finalizes the initialization by signaling the list to allocate
         /// data, the data is filled by ~Item()
-        ConstantList operator()();
+        ConstantList::BuildToken& operator()();
 };
 
 

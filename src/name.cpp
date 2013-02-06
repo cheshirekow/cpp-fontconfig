@@ -31,30 +31,36 @@
 namespace fontconfig
 {
 
-ObjectTypeList::ObjectTypeList(bool selfDestruct):
+
+ObjectTypeList::BuildToken ObjectTypeList::sm_seed;
+
+ObjectTypeList::ObjectTypeList():
     m_ptr(0),
-    m_iItem(0),
-    m_nItems(0),
-    m_selfDestruct(selfDestruct)
+    m_nItems(0)
+{
+
+}
+
+ObjectTypeList::ObjectTypeList( ObjectTypeList::BuildToken& token):
+    m_ptr(token.m_ptr),
+    m_nItems(token.m_nItems)
 {
 
 }
 
 ObjectTypeList::ObjectTypeList(const ObjectTypeList& other):
     m_ptr(other.m_ptr),
-    m_iItem(0),
-    m_nItems(other.m_nItems),
-    m_selfDestruct(!other.m_selfDestruct)
+    m_nItems(other.m_nItems)
 {
 
 }
 
-void* ObjectTypeList::get_ptr()
+FcObjectType* ObjectTypeList::get_ptr()
 {
     return m_ptr;
 }
 
-const void* ObjectTypeList::get_ptr() const
+const FcObjectType* ObjectTypeList::get_ptr() const
 {
     return m_ptr;
 }
@@ -64,25 +70,46 @@ int ObjectTypeList::get_nItems() const
     return m_nItems;
 }
 
-ObjectTypeList::~ObjectTypeList()
+void ObjectTypeList::destroy()
 {
-    if(m_selfDestruct)
-        delete [] (FcObjectType*)m_ptr;
+    if(m_ptr)
+        delete [] m_ptr;
 }
 
-void ObjectTypeList::incrementCount()
+
+ObjectTypeList::Item ObjectTypeList::create()
+{
+    sm_seed.init();
+    return Item(sm_seed);
+}
+
+
+
+void ObjectTypeList::BuildToken::init()
+{
+    m_ptr    = 0;
+    m_iItem  = 0;
+    m_nItems = 0;
+}
+
+
+void ObjectTypeList::BuildToken::incrementCount()
 {
     assert( !m_ptr );
     m_nItems++;
 }
 
-void ObjectTypeList::allocate()
+void ObjectTypeList::BuildToken::allocate()
 {
+    // there's one extra item due to the Item created by () at the end of
+    // the list
+    --m_nItems;
+
     assert( !m_ptr );
     m_ptr = new FcObjectType[m_nItems];
 }
 
-bool ObjectTypeList::write( const char* object, Type_t type )
+void ObjectTypeList::BuildToken::write( const char* object, Type_t type )
 {
     assert( m_iItem < m_nItems );
 
@@ -90,42 +117,38 @@ bool ObjectTypeList::write( const char* object, Type_t type )
     ptr[m_iItem].object = object;
     ptr[m_iItem].type   = (FcType)type;
     m_iItem++;
-
-    return (m_iItem == m_nItems);
-}
-
-ObjectTypeList::Item ObjectTypeList::create()
-{
-    ObjectTypeList* list = new ObjectTypeList(false);
-    return Item(list);
 }
 
 
-ObjectTypeList::Item::Item( ObjectTypeList* list ):
-    m_list(list),
+
+
+ObjectTypeList::Item::Item( ObjectTypeList::BuildToken& token ):
+    m_token(token),
     m_object(0),
-    m_type(type::Void)
+    m_type(type::Void),
+    m_isLast(false)
 {
-
+    m_token.incrementCount();
 }
 
 ObjectTypeList::Item::~Item()
 {
-    if( m_list->write(m_object,m_type) )
-        delete m_list;
+    if(!m_isLast)
+        m_token.write(m_object,m_type);
 }
 
 ObjectTypeList::Item ObjectTypeList::Item::operator()( const char* object, Type_t type )
 {
     m_object = object;
     m_type   = type;
-    return Item(m_list);
+    return Item(m_token);
 }
 
-ObjectTypeList ObjectTypeList::Item::operator()()
+ObjectTypeList::BuildToken& ObjectTypeList::Item::operator()()
 {
-    m_list->allocate();
-    return *m_list;
+    m_isLast = true;
+    m_token.allocate();
+    return m_token;
 }
 
 
@@ -135,30 +158,35 @@ ObjectTypeList ObjectTypeList::Item::operator()()
 
 
 
+ConstantList::BuildToken ConstantList::sm_seed;
 
-
-ConstantList::ConstantList(bool selfDestruct):
+ConstantList::ConstantList():
     m_ptr(0),
-    m_iItem(0),
-    m_nItems(0),
-    m_selfDestruct(selfDestruct)
+    m_nItems(0)
 {
+
+}
+
+ConstantList::ConstantList( ConstantList::BuildToken& token):
+    m_ptr(token.m_ptr),
+    m_nItems(token.m_nItems)
+{
+
 }
 
 ConstantList::ConstantList(const ConstantList& other):
     m_ptr(other.m_ptr),
-    m_iItem(0),
-    m_nItems(other.m_nItems),
-    m_selfDestruct(!other.m_selfDestruct)
+    m_nItems(other.m_nItems)
 {
+
 }
 
-void* ConstantList::get_ptr()
+FcConstant* ConstantList::get_ptr()
 {
     return m_ptr;
 }
 
-const void* ConstantList::get_ptr() const
+const FcConstant* ConstantList::get_ptr() const
 {
     return m_ptr;
 }
@@ -168,73 +196,93 @@ int ConstantList::get_nItems() const
     return m_nItems;
 }
 
-ConstantList::~ConstantList()
+void ConstantList::destroy()
 {
-     if(m_selfDestruct)
-        delete [] (FcConstant*)m_ptr;
+    if(m_ptr)
+        delete [] m_ptr;
 }
+
 
 ConstantList::Item ConstantList::create()
 {
-    ConstantList* list = new ConstantList(false);
-    return Item(list);
+    sm_seed.init();
+    return Item(sm_seed);
 }
 
-void ConstantList::incrementCount()
+
+
+void ConstantList::BuildToken::init()
+{
+    m_ptr    = 0;
+    m_iItem  = 0;
+    m_nItems = 0;
+}
+
+
+void ConstantList::BuildToken::incrementCount()
 {
     assert( !m_ptr );
     m_nItems++;
 }
 
-void ConstantList::allocate()
+void ConstantList::BuildToken::allocate()
 {
+    // there's one extra item due to the Item created by () at the end of
+    // the list
+    --m_nItems;
+
     assert( !m_ptr );
-    m_ptr = new FcObjectType[m_nItems];
+    m_ptr = new FcConstant[m_nItems];
 }
 
-
-bool ConstantList::write( const Char8_t* name, const char* object, int value )
+void ConstantList::BuildToken::write(
+        const Char8_t* name, const char* object, int value)
 {
     assert( m_iItem < m_nItems );
 
-    FcConstant* ptr = (FcConstant*)m_ptr;
-    ptr[m_iItem].name   = name;
-    ptr[m_iItem].object = object;
-    ptr[m_iItem].value  = value;
+    m_ptr[m_iItem].name   = name;
+    m_ptr[m_iItem].object = object;
+    m_ptr[m_iItem].value  = value;
     m_iItem++;
-
-    return (m_iItem == m_nItems);
 }
 
-ConstantList::Item::Item(ConstantList* list):
-    m_list(list),
+
+
+
+ConstantList::Item::Item( ConstantList::BuildToken& token ):
+    m_token(token),
     m_name(0),
     m_object(0),
-    m_value(0)
+    m_value(0),
+    m_isLast(false)
 {
+    m_token.incrementCount();
 }
 
 ConstantList::Item::~Item()
 {
-    if( m_list->write(m_name,m_object,m_value) )
-        delete m_list;
+    if(!m_isLast)
+        m_token.write(m_name,m_object,m_value);
 }
 
-ConstantList::Item ConstantList::Item::operator ()(
-        const Char8_t* name, const char* object, int value)
+ConstantList::Item ConstantList::Item::operator()(
+        const Char8_t* name, const char* object, int value )
 {
-    m_name      = name;
-    m_object    = object;
-    m_value     = value;
+    m_name   = name;
+    m_object = object;
+    m_value  = value;
 
-    return Item(m_list);
+    return Item(m_token);
 }
 
-ConstantList ConstantList::Item::operator ()()
+ConstantList::BuildToken& ConstantList::Item::operator()()
 {
-    m_list->allocate();
-    return *m_list;
+    m_isLast = true;
+    m_token.allocate();
+    return m_token;
 }
+
+
 
 
 
@@ -261,14 +309,14 @@ namespace name
 bool registerObjectTypes( const ObjectTypeList& list )
 {
     return FcNameRegisterObjectTypes(
-            (const FcObjectType*)list.get_ptr(),
+            list.get_ptr(),
             list.get_nItems() );
 }
 
 bool unregisterObjectTypes( const ObjectTypeList& list )
 {
     return FcNameUnregisterObjectTypes(
-            (const FcObjectType*)list.get_ptr(),
+            list.get_ptr(),
             list.get_nItems() );
 }
 
@@ -280,14 +328,14 @@ ObjectType getObjectType( const char* object )
 bool registerConstants(const ConstantList& list)
 {
     return FcNameRegisterConstants(
-                (const FcConstant*)list.get_ptr(),
+                list.get_ptr(),
                 list.get_nItems() );
 }
 
 bool unregisterConstants(const ConstantList& list)
 {
     return FcNameUnregisterConstants(
-                (const FcConstant*)list.get_ptr(),
+                list.get_ptr(),
                 list.get_nItems() );
 }
 
