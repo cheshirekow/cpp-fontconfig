@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   TypeMap.cpp
+ *  @file   src/TypeMap.cpp
  *
  *  \date   Jul 23, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

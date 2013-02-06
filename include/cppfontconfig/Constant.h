@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   Constant.h
+ *  @file   include/cppfontconfig/Constant.h
  *
  *  \date   Jul 23, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

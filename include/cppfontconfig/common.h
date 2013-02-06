@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   common.h
+ *  @file   include/cppfontconfig/common.h
  *
  *  \date   Jul 19, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   Blanks.cpp
+ *  @file   src/Blanks.cpp
  *
  *  \date   Jul 20, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

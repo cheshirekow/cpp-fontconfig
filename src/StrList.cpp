@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   StrList.cpp
+ *  @file   src/StrList.cpp
  *
  *  \date   Jul 20, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

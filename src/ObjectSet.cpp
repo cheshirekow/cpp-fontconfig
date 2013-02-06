@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   ObjectSet.cpp
+ *  @file   src/ObjectSet.cpp
  *
  *  \date   Jul 22, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

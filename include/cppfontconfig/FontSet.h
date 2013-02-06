@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   FontSet.h
+ *  @file   include/cppfontconfig/FontSet.h
  *
  *  \date   Jul 22, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)

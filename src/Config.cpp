@@ -17,7 +17,7 @@
  *  along with cppfontconfig.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- *  \file   Config.cpp
+ *  @file   src/Config.cpp
  *
  *  \date   Jul 22, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)
