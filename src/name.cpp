@@ -320,9 +320,9 @@ bool unregisterObjectTypes( const ObjectTypeList& list )
             list.get_nItems() );
 }
 
-ObjectType getObjectType( const char* object )
+RefPtr<ObjectType> getObjectType( const char* object )
 {
-    return ObjectType(  FcNameGetObjectType(object) );
+    return RefPtr<ObjectType>(  FcNameGetObjectType(object) );
 }
 
 bool registerConstants(const ConstantList& list)

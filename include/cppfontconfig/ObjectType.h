@@ -27,24 +27,50 @@
 #ifndef CPPFONTCONFIG_OBJECTTYPE_H_
 #define CPPFONTCONFIG_OBJECTTYPE_H_
 
+#include <fontconfig/fontconfig.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/common.h>
 
 namespace fontconfig
 {
 
+class ObjectType;
+
 /// wraps FcObjectType
-class ObjectType
+class ObjectTypeDelegate
 {
     private:
-        const void* m_ptr;
+        const FcObjectType* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit ObjectTypeDelegate(FcObjectType* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        ObjectTypeDelegate( const ObjectTypeDelegate& other );
+
+        /// not assignable
+        ObjectTypeDelegate& operator=( const ObjectTypeDelegate& other );
 
     public:
-        ObjectType(const void* ptr);
+        friend class RefPtr<ObjectType>;
 
-        const void* get_ptr() const;
+        ObjectTypeDelegate* operator->(){ return this; }
+        const ObjectTypeDelegate* operator->() const { return this; }
 
-        const char* get_object();
         Type_t get_type();
+};
+
+struct ObjectType
+{
+    typedef ObjectTypeDelegate  Delegate;
+    typedef const FcObjectType* Storage;
+    typedef const FcObjectType* cobjptr;
 };
 
 } // namespace fontconfig 

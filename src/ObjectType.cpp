@@ -30,27 +30,10 @@
 namespace fontconfig
 {
 
-ObjectType::ObjectType(const void* ptr):
-    m_ptr(ptr)
-{
 
-}
-
-const void* ObjectType::get_ptr() const
+Type_t ObjectTypeDelegate::get_type()
 {
-    return m_ptr;
-}
-
-const char* ObjectType::get_object()
-{
-    FcObjectType* ot = (FcObjectType*)m_ptr;
-    return ot->object;
-}
-
-Type_t ObjectType::get_type()
-{
-    FcObjectType* ot = (FcObjectType*)m_ptr;
-    return (Type_t)ot->type;
+    return (Type_t)m_ptr->type;
 }
 
 

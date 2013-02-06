@@ -310,7 +310,7 @@ bool unregisterObjectTypes( const ObjectTypeList& list );
 /**
  *  Return the object type for the pattern element named object.
  */
-ObjectType getObjectType( const char* object );
+RefPtr<ObjectType> getObjectType( const char* object );
 
 /// Register symbolic constants
 /**
