@@ -31,11 +31,13 @@
 
 namespace freetype
 {
+    template <typename T> class RefPtr;
     class Face;
 }
 
 namespace fontconfig {
-namespace ft         {
+
+namespace ft = freetype;
 
 /// map Unicode to glyph id
 /**
@@ -45,7 +47,7 @@ namespace ft         {
  *  sensitive areas; results from this function are intended to be cached by
  *  higher level functions.
  */
-Char32_t CharIndex(freetype::Face face, Char32_t ucs4);
+Char32_t CharIndex(ft::RefPtr<ft::Face> face, Char32_t ucs4);
 
 /// compute Unicode coverage
 /**
@@ -54,7 +56,7 @@ Char32_t CharIndex(freetype::Face face, Char32_t ucs4);
  *  'blanks' is not 0, the glyphs in the font are examined and any blank
  *  glyphs not in 'blanks' are not placed in the returned FcCharSet.
  */
-CharSet CharSet(freetype::Face face, Blanks blanks);
+CharSet CharSet(ft::RefPtr<ft::Face> face, Blanks blanks);
 
 /// compute Unicode coverage and spacing type
 /**
@@ -67,7 +69,7 @@ CharSet CharSet(freetype::Face face, Blanks blanks);
  *  in precisely two widths, one twice as wide as the other, or FC_PROPORTIONAL
  *  where the font has glyphs of many widths.
  */
-CharSet CharSetAndSpacing(freetype::Face face, Blanks blanks, int *spacing);
+CharSet CharSetAndSpacing(ft::RefPtr<ft::Face>, Blanks blanks, int *spacing);
 
 /// compute pattern from font file (and index)
 /**
@@ -84,7 +86,6 @@ Pattern Query(const Char8_t *file, int id, Blanks blanks, int *count);
 Pattern QueryFace(const freetype::Face& face, const Char8_t *file, int id, Blanks blanks);
 
 
-}
 }
 
 

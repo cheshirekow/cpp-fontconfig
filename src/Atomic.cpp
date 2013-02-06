@@ -31,50 +31,45 @@ namespace fontconfig
 {
 
 
-Atomic::Atomic(void* ptr):
-    m_ptr(ptr)
+
+bool AtomicDelegate::lock()
 {
+    return FcAtomicLock( m_ptr );
 }
 
-Atomic Atomic::create(const Char8_t* file)
+Char8_t* AtomicDelegate::newFile()
 {
-    return Atomic(
-            FcAtomicCreate(file) );
+    return FcAtomicNewFile( m_ptr );
 }
 
-bool Atomic::lock()
+Char8_t* AtomicDelegate::origFile()
 {
-    return FcAtomicLock( (FcAtomic*)m_ptr );
+    return FcAtomicOrigFile( m_ptr );
 }
 
-Char8_t* Atomic::newFile()
+bool AtomicDelegate::replaceOrig()
 {
-    return FcAtomicNewFile( (FcAtomic*)m_ptr );
+    return FcAtomicReplaceOrig( m_ptr );
 }
 
-Char8_t* Atomic::origFile()
+void AtomicDelegate::deleteNew()
 {
-    return FcAtomicOrigFile( (FcAtomic*)m_ptr );
+    return FcAtomicDeleteNew( m_ptr );
 }
 
-bool Atomic::replaceOrig()
+void AtomicDelegate::unlock()
 {
-    return FcAtomicReplaceOrig( (FcAtomic*)m_ptr );
+    return FcAtomicUnlock( m_ptr );
 }
 
-void Atomic::deleteNew()
+void AtomicDelegate::destroy()
 {
-    return FcAtomicDeleteNew( (FcAtomic*)m_ptr );
+    return FcAtomicDestroy( m_ptr );
 }
 
-void Atomic::unlock()
+RefPtr<Atomic> Atomic::create(const Char8_t* file)
 {
-    return FcAtomicUnlock( (FcAtomic*)m_ptr );
-}
-
-void Atomic::destroy()
-{
-    return FcAtomicDestroy( (FcAtomic*)m_ptr );
+    return RefPtr<Atomic>( FcAtomicCreate(file) );
 }
 
 } // namespace fontconfig 

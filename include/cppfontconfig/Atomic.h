@@ -27,10 +27,14 @@
 #ifndef CPPFONTCONFIG_ATOMIC_H_
 #define CPPFONTCONFIG_ATOMIC_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 
 namespace fontconfig
 {
+
+class Atomic;
 
 /// Used for locking access to configuration files. Provides a safe way to
 /// update configuration files.
@@ -40,29 +44,27 @@ namespace fontconfig
  *  ensuring that a consistent and complete version of the configuration file
  *  is always available.
  */
-class Atomic
+class AtomicDelegate
 {
     private:
-        void* m_ptr;
+        FcAtomic* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit AtomicDelegate(FcAtomic* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        AtomicDelegate( const AtomicDelegate& other );
+
+        /// not assignable
+        AtomicDelegate& operator=( const AtomicDelegate& other );
 
     public:
-
-        /// wrapp constructor
-        /**
-         *  wraps the pointer with this interface, does nothing else
-         */
-        Atomic(void* ptr);
-
-        /// create an FcAtomic object
-        /**
-         *  Creates a data structure containing data needed to control access
-         *  to file. Writing is done to a separate file. Once that file is
-         *  complete, the original configuration file is atomically replaced
-         *  so that reading process always see a consistent and complete file
-         *  without the need to lock for reading.
-         */
-        Atomic create (const Char8_t *file);
-
         /// lock a file
         /**
          *  Attempts to lock the file referenced by atomic. Returns FcFalse if
@@ -109,6 +111,30 @@ class Atomic
          *  Destroys atomic.
          */
         void destroy();
+};
+
+/// traits class for FcAtomic wrapper
+/// Used for locking access to configuration files. Provides a safe way to
+/// update configuration files.
+/**
+ *   @note FcAtomic objects are not reference counted. Be sure to call destroy()
+ *         on the last reference to an atomic object
+ */
+struct Atomic
+{
+    typedef AtomicDelegate  Delegate;
+    typedef FcAtomic*       Storage;
+    typedef FcAtomic*       cobjptr;
+
+    /// create an FcAtomic object
+    /**
+     *  Creates a data structure containing data needed to control access
+     *  to file. Writing is done to a separate file. Once that file is
+     *  complete, the original configuration file is atomically replaced
+     *  so that reading process always see a consistent and complete file
+     *  without the need to lock for reading.
+     */
+    static RefPtr<Atomic> create (const Char8_t *file);
 };
 
 } // namespace fontconfig 
