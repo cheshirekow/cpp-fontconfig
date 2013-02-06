@@ -254,7 +254,7 @@ class Pattern
          *  referenced by the return value. Use these in preference to
          *  FcPatternGet to provide compile-time typechecking.
          */
-        Result_t get( const char* obj, int n, Matrix& m );
+        Result_t get( const char* obj, int n, Matrix*& m );
 
         /// get a charset
         /**

@@ -188,7 +188,7 @@ bool Pattern::add(const char* obj, const Matrix& m)
 {
     return FcPatternAddMatrix( (FcPattern*)m_ptr,
                                 obj,
-                                (FcMatrix*)m.get_ptr() );
+                                &m );
 }
 
 bool Pattern::add(const char* obj, const RefPtr<CharSet>& c)
@@ -231,14 +231,12 @@ Result_t Pattern::get(const char* obj, int n, Char8_t*& s)
 // FIXME: Figure out what to do about matrices... if we do what we're doing now,
 // the got matrix is not modifiable, or rather, if modified the matrix stored
 // in the pattern wont get those changes
-Result_t Pattern::get(const char* obj, int n, Matrix& m)
+Result_t Pattern::get(const char* obj, int n, Matrix*& m)
 {
     FcMatrix* mm;
     Result_t result =
             (Result_t)FcPatternGetMatrix( (FcPattern*)m_ptr, obj, n, &mm );
-    FcMatrix* mm_out = (FcMatrix*)m.get_ptr();
-
-    *mm_out = *mm;
+    m = static_cast<Matrix*>(mm);
 
     return result;
 }
