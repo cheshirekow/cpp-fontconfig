@@ -116,9 +116,9 @@ StrList Config::getConfigFiles()
     return StrList( FcConfigGetConfigFiles( (FcConfig*)m_ptr  ) );
 }
 
-Blanks Config::getBlanks()
+RefPtr<Blanks> Config::getBlanks()
 {
-    return Blanks( FcConfigGetBlanks( (FcConfig*)m_ptr  ) ) ;
+    return RefPtr<Blanks>( FcConfigGetBlanks( (FcConfig*)m_ptr  ) ) ;
 }
 
 StrList Config::getCacheDirs() const

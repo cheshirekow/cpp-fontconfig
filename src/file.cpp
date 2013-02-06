@@ -31,14 +31,14 @@
 namespace fontconfig
 {
 
-bool fileScan(FontSet set, StrSet dirs, Blanks blanks,
+bool fileScan(FontSet set, StrSet dirs, RefPtr<Blanks>blanks,
         const Char8_t* file, bool force)
 {
     return FcFileScan(
                 (FcFontSet*)set.get_ptr(),
                 (FcStrSet*)dirs.get_ptr(),
                 0,
-                (FcBlanks*)blanks.get_ptr(),
+                blanks.subvert(),
                 file,
                 force ? FcTrue : FcFalse );
 }
@@ -48,14 +48,14 @@ bool fileIsDir(const Char8_t* file)
     return FcFileIsDir(file);
 }
 
-bool dirScan(FontSet set, StrSet dirs, Blanks blanks,
+bool dirScan(FontSet set, StrSet dirs, RefPtr<Blanks> blanks,
         const Char8_t* dir, bool force)
 {
     return FcDirScan(
                 (FcFontSet*)set.get_ptr(),
                 (FcStrSet*)dirs.get_ptr(),
                 (FcFileCache*) 0,
-                (FcBlanks*)blanks.get_ptr(),
+                blanks.subvert(),
                 dir,
                 force ? FcTrue : FcFalse );
 }

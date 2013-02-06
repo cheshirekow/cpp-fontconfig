@@ -32,6 +32,7 @@
 #include <cppfontconfig/Blanks.h>
 #include <cppfontconfig/Pattern.h>
 #include <cppfontconfig/FontSet.h>
+#include <cppfontconfig/RefPtr.h>
 
 namespace fontconfig
 {
@@ -232,7 +233,7 @@ class Config
          *  NULL, is valid as long as the owning FcConfig is alive. If config
          *  is NULL, the current configuration is used.
          */
-        Blanks getBlanks();
+        RefPtr<Blanks> getBlanks();
 
 
         /// return the list of directories searched for cache files

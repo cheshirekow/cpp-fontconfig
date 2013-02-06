@@ -65,6 +65,11 @@ class AtomicDelegate
         AtomicDelegate& operator=( const AtomicDelegate& other );
 
     public:
+        friend class RefPtr<Atomic>;
+
+        AtomicDelegate* operator->(){ return this; }
+        const AtomicDelegate* operator->() const { return this; }
+
         /// lock a file
         /**
          *  Attempts to lock the file referenced by atomic. Returns FcFalse if

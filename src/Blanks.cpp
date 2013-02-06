@@ -32,41 +32,27 @@ namespace fontconfig
 {
 
 
-Blanks::Blanks(void* ptr):
-    m_ptr(ptr)
+
+void BlanksDelegate::destroy()
 {
+    FcBlanksDestroy( m_ptr);
 }
 
-void* Blanks::get_ptr()
+bool BlanksDelegate::add(Char32_t ucs4)
 {
-    return m_ptr;
+    return FcBlanksAdd(m_ptr, ucs4);
 }
 
-const void* Blanks::get_ptr() const
+bool BlanksDelegate::isMember(Char32_t ucs4)
 {
-    return m_ptr;
-}
-
-void Blanks::destroy()
-{
-    FcBlanksDestroy( (FcBlanks*) (m_ptr));
-}
-
-bool Blanks::add(Char32_t ucs4)
-{
-    return FcBlanksAdd((FcBlanks*) (m_ptr), ucs4);
-}
-
-bool Blanks::isMember(Char32_t ucs4)
-{
-    return FcBlanksIsMember((FcBlanks*) (m_ptr), ucs4);
+    return FcBlanksIsMember(m_ptr, ucs4);
 }
 
 
 
-Blanks* Blanks::create()
+RefPtr<Blanks> Blanks::create()
 {
-    return (Blanks*) (FcBlanksCreate());
+    return RefPtr<Blanks>(FcBlanksCreate());
 }
 
 } // namespace fontconfig 

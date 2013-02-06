@@ -27,11 +27,14 @@
 #ifndef CPPFONTCONFIG_BLANKS_H_
 #define CPPFONTCONFIG_BLANKS_H_
 
+#include <fontconfig/fontconfig.h>
 #include <cppfontconfig/common.h>
+#include <cppfontconfig/RefPtr.h>
 
 namespace fontconfig
 {
 
+class Blanks;
 
 /// holds a list of Unicode chars which are expected to be blank
 /**
@@ -47,18 +50,31 @@ namespace fontconfig
  *  and the copy constructor will simply copy that pointer so there is no
  *  reason to allocate a Blank on the heap.
  */
-class Blanks
+class BlanksDelegate
 {
     private:
-        void* m_ptr;
+        FcBlanks* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit BlanksDelegate(FcBlanks* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        BlanksDelegate( const BlanksDelegate& other );
+
+        /// not assignable
+        BlanksDelegate& operator=( const BlanksDelegate& other );
 
     public:
-        void* get_ptr();
-        const void* get_ptr() const;
+        friend class RefPtr<Blanks>;
 
-        /// Constructs a new Blanks object wrapping the underlying
-        /// c structure
-        Blanks(void* ptr);
+        BlanksDelegate* operator->(){ return this; }
+        const BlanksDelegate* operator->() const { return this; }
 
         /// Destroys an FcBlanks object, freeing any associated memory.
         /**
@@ -83,11 +99,35 @@ class Blanks
          */
         bool isMember( Char32_t ucs4 );
 
-        /// Creates an empty FcBlanks oject
-        /**
-         *  @see FcBlanksCreate
-         */
-        static Blanks* create();
+};
+
+
+/// traits class for FcBlanks. holds a list of Unicode chars which are
+/// expected to be blank
+/**
+ *  unexpectedly
+ *  blank chars are assumed to be invalid and are elided from the charset
+ *  associated with the font.
+ *
+ *  Blanks structures are not reference counted. It is safe to pass around
+ *  copies of this object, however you must remember to call destroy on
+ *  one and only one copy when you're done with it
+ *
+ *  It contains only one data member which is a pointer
+ *  and the copy constructor will simply copy that pointer so there is no
+ *  reason to allocate a Blank on the heap.
+ */
+struct Blanks
+{
+    typedef BlanksDelegate   Delegate;
+    typedef FcBlanks*        Storage;
+    typedef FcBlanks*        cobjptr;
+
+    /// Creates an empty FcBlanks oject
+    /**
+     *  @see FcBlanksCreate
+     */
+    static RefPtr<Blanks> create();
 };
 
 } // namespace fontconfig 
