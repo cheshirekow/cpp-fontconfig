@@ -30,28 +30,20 @@
 namespace fontconfig
 {
 
-Constant::Constant(const void* ptr):
-    m_ptr(ptr)
-{
 
+const Char8_t* ConstantDelegate::get_name() const
+{
+    return m_ptr->name;
 }
 
-const Char8_t* Constant::get_name()
+const char* ConstantDelegate::get_object() const
 {
-    const FcConstant* c = (const FcConstant*)m_ptr;
-    return c->name;
+    return m_ptr->object;
 }
 
-const char* Constant::get_object()
+int ConstantDelegate::get_value() const
 {
-    const FcConstant* c = (const FcConstant*)m_ptr;
-    return c->object;
-}
-
-int Constant::get_value()
-{
-    const FcConstant* c = (const FcConstant*)m_ptr;
-    return c->value;
+    return m_ptr->value;
 }
 
 

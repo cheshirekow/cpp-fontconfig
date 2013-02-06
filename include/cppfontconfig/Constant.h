@@ -27,22 +27,56 @@
 #ifndef CPPFONTCONFIG_CONSTANT_H_
 #define CPPFONTCONFIG_CONSTANT_H_
 
+#include <fontconfig/fontconfig.h>
+#include <cppfontconfig/RefPtr.h>
 #include <cppfontconfig/common.h>
 
 namespace fontconfig
 {
 
-class Constant
+class Constant;
+
+
+class ConstantDelegate
 {
     private:
-        const void* m_ptr;
+        const FcConstant* m_ptr;
+
+        /// wrap constructor
+        /**
+         *  wraps the pointer with this interface, does nothing else, only
+         *  called by RefPtr<Atomic>
+         */
+        explicit ConstantDelegate(const FcConstant* ptr):
+            m_ptr(ptr)
+        {}
+
+        /// not copy-constructable
+        ConstantDelegate( const ConstantDelegate& other );
+
+        /// not assignable
+        ConstantDelegate& operator=( const ConstantDelegate& other );
 
     public:
-        Constant(const void* ptr);
+        friend class RefPtr<Constant>;
 
-        const Char8_t*  get_name();
-        const char*     get_object();
-        int             get_value();
+        ConstantDelegate* operator->(){ return this; }
+        const ConstantDelegate* operator->() const { return this; }
+
+
+        const Char8_t*  get_name()   const;
+        const char*     get_object() const;
+        int             get_value()  const;
+};
+
+
+struct Constant
+{
+    typedef ConstantDelegate    Delegate;
+    typedef const FcConstant*   Storage;
+    typedef const FcConstant*   cobjptr;
+
+
 };
 
 } // namespace fontconfig 

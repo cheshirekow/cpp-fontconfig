@@ -291,9 +291,9 @@ bool unregisterConstants(const ConstantList& list)
                 list.get_nItems() );
 }
 
-Constant getConstant(Char8_t* string)
+RefPtr<Constant> getConstant(Char8_t* string)
 {
-    return Constant( FcNameGetConstant(string) );
+    return RefPtr<Constant>( FcNameGetConstant(string) );
 }
 
 bool constant(Char8_t* string, int* result)

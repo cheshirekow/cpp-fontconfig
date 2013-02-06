@@ -273,7 +273,7 @@ bool unregisterConstants( const ConstantList& list );
 /**
  *  Return the FcConstant structure related to symbolic constant string.
  */
-Constant getConstant(Char8_t* string);
+RefPtr<Constant> getConstant(Char8_t* string);
 
 /// Get the value for a symbolic constant
 /**
