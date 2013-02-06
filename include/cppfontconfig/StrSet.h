@@ -21,7 +21,7 @@
  *
  *  \date   Jul 20, 2012
  *  \author Josh Bialkowski (jbialk@mit.edu)
- *  \brief  
+ *  \brief
  */
 
 #ifndef CPPFONTCONFIG_STRSET_H_

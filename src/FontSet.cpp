@@ -48,7 +48,7 @@ void FontSetDelegate::print()
 
 RefPtr<FontSet> FontSet::create(void)
 {
-    return RefPtr<FontSet>( FcFontSetCreate() );
+    return FcFontSetCreate();
 }
 
 

@@ -341,7 +341,7 @@ bool unregisterConstants(const ConstantList& list)
 
 RefPtr<Constant> getConstant(Char8_t* string)
 {
-    return RefPtr<Constant>( FcNameGetConstant(string) );
+    return FcNameGetConstant(string);
 }
 
 bool constant(Char8_t* string, int* result)

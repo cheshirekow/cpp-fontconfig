@@ -82,17 +82,17 @@ bool ConfigDelegate::buildFonts()
 
 RefPtr<StrList> ConfigDelegate::getFontDirs()
 {
-    return RefPtr<StrList>( FcConfigGetFontDirs( m_ptr ) );
+    return FcConfigGetFontDirs( m_ptr );
 }
 
 RefPtr<StrList> ConfigDelegate::getConfigDirs()
 {
-    return RefPtr<StrList>( FcConfigGetConfigDirs( m_ptr  ) );
+    return FcConfigGetConfigDirs( m_ptr  );
 }
 
 RefPtr<StrList> ConfigDelegate::getConfigFiles()
 {
-    return RefPtr<StrList>( FcConfigGetConfigFiles( m_ptr  ) );
+    return FcConfigGetConfigFiles( m_ptr  );
 }
 
 RefPtr<Blanks> ConfigDelegate::getBlanks()
@@ -102,7 +102,7 @@ RefPtr<Blanks> ConfigDelegate::getBlanks()
 
 RefPtr<StrList> ConfigDelegate::getCacheDirs() const
 {
-    return RefPtr<StrList>( FcConfigGetCacheDirs( m_ptr  ) );
+    return FcConfigGetCacheDirs( m_ptr  );
 }
 
 int ConfigDelegate::getRescanInterval()
@@ -117,7 +117,7 @@ bool ConfigDelegate::setRescanInterval(int rescanInterval)
 
 RefPtr<FontSet> ConfigDelegate::getFonts(SetName_t set)
 {
-    return RefPtr<FontSet>( FcConfigGetFonts( m_ptr , (FcSetName)set ) );
+    return FcConfigGetFonts( m_ptr , (FcSetName)set );
 }
 
 bool ConfigDelegate::appFontAddFile(const Char8_t* file)
@@ -326,7 +326,7 @@ Char8_t* Config::filename(const Char8_t* url)
 
 RefPtr<Config> Config::create()
 {
-    return RefPtr<Config>( FcConfigCreate() );
+    return FcConfigCreate();
 }
 
 RefPtr<Config> Config::getCurrent()
@@ -335,7 +335,7 @@ RefPtr<Config> Config::getCurrent()
     // returned pointer so we use FcConfigReference(0) which returns
     // the current but increases the reference count, we could also
     // do that part ourselves if we wnated to
-    return RefPtr<Config>( FcConfigReference(0) );
+    return FcConfigReference(0);
 }
 
 

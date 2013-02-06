@@ -69,7 +69,7 @@ void AtomicDelegate::destroy()
 
 RefPtr<Atomic> Atomic::create(const Char8_t* file)
 {
-    return RefPtr<Atomic>( FcAtomicCreate(file) );
+    return FcAtomicCreate(file);
 }
 
 } // namespace fontconfig 

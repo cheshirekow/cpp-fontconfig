@@ -66,7 +66,7 @@ RefPtr<ObjectSet> ObjectSet::Builder::done()
 
 RefPtr<ObjectSet> ObjectSet::create()
 {
-    return RefPtr<ObjectSet>( FcObjectSetCreate() );
+    return FcObjectSetCreate();
 }
 
 RefPtr<ObjectSet> ObjectSet::build(const char* first, ...)

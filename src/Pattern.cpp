@@ -52,7 +52,7 @@ void RefPtr<Pattern>::dereference()
 
 RefPtr<Pattern> Pattern::create(void)
 {
-    return RefPtr<Pattern>( FcPatternCreate() );
+    return FcPatternCreate();
 }
 
 Pattern::Builder Pattern::buildNew( )
@@ -63,7 +63,7 @@ Pattern::Builder Pattern::buildNew( )
 
 RefPtr<Pattern> Pattern::parse(const Char8_t* name)
 {
-    return RefPtr<Pattern>( FcNameParse( name ) );
+    return FcNameParse( name );
 }
 
 
@@ -124,7 +124,7 @@ RefPtr<Pattern> Pattern::Builder::done()
 
 RefPtr<Pattern> PatternDelegate::duplicate()
 {
-    return RefPtr<Pattern>( FcPatternDuplicate( m_ptr ) );
+    return FcPatternDuplicate( m_ptr );
 }
 
 RefPtr<Pattern> PatternDelegate::filter(const RefPtr<ObjectSet> os)

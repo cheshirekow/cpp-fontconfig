@@ -33,12 +33,12 @@ namespace fontconfig
 
 RefPtr<Config> initLoadConfig()
 {
-    return RefPtr<Config>( FcInitLoadConfig() );
+    return FcInitLoadConfig();
 }
 
 RefPtr<Config> initLoadConfigAndFonts()
 {
-    return RefPtr<Config>( FcInitLoadConfigAndFonts() );
+    return FcInitLoadConfigAndFonts();
 }
 
 bool init()

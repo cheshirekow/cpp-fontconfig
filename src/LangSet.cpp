@@ -33,7 +33,7 @@ namespace fontconfig
 
 RefPtr<LangSet> LangSet::create()
 {
-    return RefPtr<LangSet>( FcLangSetCreate( ) );
+    return FcLangSetCreate( );
 }
 
 void LangSetDelegate::destroy()
@@ -43,7 +43,7 @@ void LangSetDelegate::destroy()
 
 RefPtr<LangSet> LangSetDelegate::copy()
 {
-    return RefPtr<LangSet>( FcLangSetCopy( m_ptr ) );
+    return FcLangSetCopy( m_ptr );
 }
 
 bool LangSetDelegate::add(const Char8_t* lang)
@@ -88,12 +88,12 @@ RefPtr<StrSet> LangSetDelegate::getLangs()
 
 RefPtr<LangSet> LangSetDelegate::creatUnion(const RefPtr<LangSet> b)
 {
-    return RefPtr<LangSet>( FcLangSetUnion( m_ptr, b.subvert() ) );
+    return FcLangSetUnion( m_ptr, b.subvert() );
 }
 
 RefPtr<LangSet> LangSetDelegate::subtract(const RefPtr<LangSet> b)
 {
-    return RefPtr<LangSet>( FcLangSetSubtract( m_ptr, b.subvert() ) );
+    return FcLangSetSubtract( m_ptr, b.subvert() );
 }
 
 } // namespace fontconfig 
