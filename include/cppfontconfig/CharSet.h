@@ -37,6 +37,7 @@ namespace fontconfig
 
 class CharSet;
 
+
 /// An CharSet is an abstract type that holds the set of encoded Unicode
 /// chars in a font. Operations to build and compare these sets are provided.
 /**
@@ -195,6 +196,12 @@ struct CharSet
      */
     static RefPtr<CharSet> create (void);
 };
+
+/// CharSets are reference counted
+template <> void RefPtr<CharSet>::reference();
+
+/// CharSets are reference counted
+template <> void RefPtr<CharSet>::dereference();
 
 
 } // namespace fontconfig 

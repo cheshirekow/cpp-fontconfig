@@ -465,6 +465,13 @@ struct Config
     static RefPtr<Config> getCurrent();
 };
 
+
+/// Configs are reference counted
+template <> void RefPtr<Config>::reference();
+
+/// Configs are reference counted
+template <> void RefPtr<Config>::dereference();
+
 } // namespace fontconfig 
 
 #endif // CONFIG_H_

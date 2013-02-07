@@ -29,9 +29,10 @@
 
 #include <cppfontconfig/AssignmentPair.h>
 #include <cppfontconfig/CPtr.h>
-
+#include <iostream>
 
 namespace fontconfig {
+
 
 /// object which acts like a c-pointer, but when dereferenced returns a
 /// delegate object which adds methods to the pointer

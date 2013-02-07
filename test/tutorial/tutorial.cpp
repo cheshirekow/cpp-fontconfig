@@ -85,10 +85,7 @@ int main( int argc, char** argv )
         std::cout << "Font found for query [" << argv[1] << "] at "
                   << file << "\n" << std::endl;
 
-        // no need to do cleanup, pattern and match will free their memory
-        // when their destructors are called
-
-        // test the ObjectTypeList
+        // demo the interface for ObjectTypeList
         ObjectTypeList oList = ObjectTypeList::create()
             ("ObjectA", type::Integer )
             ("ObjectB", type::String  )
@@ -98,6 +95,7 @@ int main( int argc, char** argv )
         std::cout << "number of items in the list: "
                   << oList.get_nItems() << std::endl;
 
+        // demo the interface for ConstantList
         ConstantList cList = ConstantList::create()
             ((const Char8_t*)"NameA", "ObjectA", 1001  )
             ((const Char8_t*)"NameB", "ObjectB", 1002  )
@@ -106,6 +104,9 @@ int main( int argc, char** argv )
 
         std::cout << "number of items in the list: "
                   << cList.get_nItems() << std::endl;
+
+        // no need to do cleanup, pattern and match will free their memory
+        // when their destructors are called
     }
 
     // unload fontconfig

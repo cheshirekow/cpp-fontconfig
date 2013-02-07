@@ -95,6 +95,10 @@ struct Pattern
 };
 
 
+/// Patterns are reference counted
+template <> void RefPtr<Pattern>::reference();
+template <> void RefPtr<Pattern>::dereference();
+
 
 /// utility for building patterns using interface similar to
 /// variable argument list
